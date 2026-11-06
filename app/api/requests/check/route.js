@@ -10,7 +10,8 @@ const LIMIT_PER_HOUR = 10;
 const normName = (n) => String(n || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 function digits10(p) {
   const d = String(p || "").replace(/\D/g, "");
-  const x = d.length === 11 && d[0] === "1" ? d.slice(1) : d;
+  let x = d.length > 10 && d[0] === "1" ? d.slice(1) : d; // drop the +1 country code
+  if (x.length === 11 && x[0] === "0") x = x.slice(1);     // and a stray leading 0 (+1 0905...)
   return x.length === 10 ? x : "";
 }
 

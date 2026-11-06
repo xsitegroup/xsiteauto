@@ -412,7 +412,7 @@ const custName=id=>cust(id)?.name||"Walk-in";
 const jobsArr=()=>Object.values(S.jobs);
 const taxName=()=>S.settings.taxName||"HST";
 const isOwing=j=>(j.status==="ready"||j.status==="done")&&totals(j).balance>0.004;
-const fmtPhone=v=>{const raw=String(v??"").trim(),d=raw.replace(/\D/g,""),x=d.length===11&&d[0]==="1"?d.slice(1):d;return x.length===10?`${x.slice(0,3)}-${x.slice(3,6)}-${x.slice(6)}`:raw};
+const fmtPhone=v=>{const raw=String(v??"").trim(),d=raw.replace(/\D/g,""),x0=d.length>10&&d[0]==="1"?d.slice(1):d,x=x0.length===11&&x0[0]==="0"?x0.slice(1):x0;return x.length===10?`${x.slice(0,3)}-${x.slice(3,6)}-${x.slice(6)}`:raw};
 // Names typed ALL CAPS or all lowercase are saved as "Title Case"; mixed case (McDonald, O'Neil) is left alone.
 function tidyName(n){n=String(n||"").replace(/\s+/g," ").trim();if(!n||(n!==n.toUpperCase()&&n!==n.toLowerCase()))return n;
   return n.toLowerCase().replace(/(^|[\s\-'’])([a-z])/g,(m,a,b)=>a+b.toUpperCase()).replace(/\bMc([a-z])/g,(m,c)=>"Mc"+c.toUpperCase())}
@@ -972,13 +972,14 @@ function vImport(){
   return `${head}
    <div class="tiles">${[["Found",c.found,""],["New",c.new,"new"],["Merged",c.merge,"merge"],["Skipped",c.skip,"skip"]].map(([l,n,f])=>`<button class="tile" type="button" data-impf="${f}" aria-pressed="${(ui.impFilter||"")===f}" style="text-align:left;cursor:pointer"><div class="lbl">${l}</div><div class="val">${n}</div></button>`).join("")}</div>
    <section class="panel"><div class="row"><h2>${esc(p.file)}</h2><div class="spacer"></div><span class="muted">${shown.length<p.rows.length?`Showing ${shown.length} of ${ui.impFilter?p.rows.filter(r=>r.action===ui.impFilter).length:p.rows.length}`:""}</span></div>
-    <div class="tablewrap"><table class="data"><thead><tr><th>Customer</th><th>Phone</th><th>Email</th><th>City</th>${c.balances?`<th class="r">Balance</th>`:""}<th></th></tr></thead><tbody>
-     ${shown.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td class="mono">${esc(r.phone)||`<span class="muted">none</span>`}</td><td>${esc(r.email)||`<span class="muted">none</span>`}</td><td>${esc(r.city)}</td>${c.balances?`<td class="r mono">${r.balance?money(r.balance):""}</td>`:""}<td>${tag(r)}</td></tr>`).join("")}
-    </tbody></table></div>
     ${c.balances?`<label class="chk"><input type="checkbox" id="imp_bal" ${ui.impBal?"checked":""}> Bring in open balances (${c.balances} customer${c.balances===1?"":"s"}). Adds an opening-balance line you can collect against.</label>`:""}
     <div class="row"><button class="btn" type="button" id="imp_back">Choose a different file</button>${c.skip?`<button class="btn" type="button" id="imp_dl">Download skipped rows</button>`:""}<div class="spacer"></div>
       <button class="btn primary" type="button" id="imp_go" ${willImport&&!readOnly?"":"disabled"}>Import ${willImport} customer${willImport===1?"":"s"}</button></div>
-    <div id="imp_out"></div></section>`;
+    <div id="imp_out"></div>
+    <div class="tablewrap"><table class="data"><thead><tr><th>Customer</th><th>Phone</th><th>Email</th><th>City</th>${c.balances?`<th class="r">Balance</th>`:""}<th></th></tr></thead><tbody>
+     ${shown.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td class="mono" style="white-space:nowrap">${esc(r.phone)||`<span class="muted">none</span>`}</td><td>${esc(r.email)||`<span class="muted">none</span>`}</td><td>${esc(r.city)}</td>${c.balances?`<td class="r mono">${r.balance?money(r.balance):""}</td>`:""}<td>${tag(r)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="row" style="margin-top:4px"><button class="btn primary" type="button" data-impgo ${willImport&&!readOnly?"":"disabled"}>Import ${willImport} customer${willImport===1?"":"s"}</button></div></section>`;
 }
 
 async function importFile(file){
@@ -1074,6 +1075,7 @@ function bindTrial(v){
   const f=$("#imp_file");if(f)f.onchange=()=>importFile(f.files[0]);
   const ib=$("#imp_back");if(ib)ib.onclick=()=>{ui.imp=null;render()};
   const ig=$("#imp_go");if(ig)ig.onclick=importGo;
+  v.querySelectorAll("[data-impgo]").forEach(b=>b.onclick=()=>{b.disabled=true;window.scrollTo({top:0,behavior:"smooth"});importGo()});
   const idl=$("#imp_dl");if(idl)idl.onclick=downloadSkipped;
   const bal=$("#imp_bal");if(bal)bal.onchange=()=>{ui.impBal=bal.checked};
   v.querySelectorAll("[data-impf]").forEach(b=>b.onclick=()=>{ui.impFilter=b.dataset.impf;render()});
@@ -1272,7 +1274,7 @@ function drawJob(isNew){
 }
 
 /* ---------- confirm a booking with the customer (email with calendar invite, or a text from the shop phone) ---------- */
-const digits=v=>{const d=String(v??"").replace(/\D/g,"");const x=d.length===11&&d[0]==="1"?d.slice(1):d;return x.length===10?x:""};
+const digits=v=>{const d=String(v??"").replace(/\D/g,"");let x=d.length>10&&d[0]==="1"?d.slice(1):d;if(x.length===11&&x[0]==="0")x=x.slice(1);return x.length===10?x:""};
 function confirmText(j,c){
   const site=S.site||{}, first=(c.name||"").split(" ")[0];
   const where=[site.street,site.town].filter(Boolean).join(", ");
