@@ -1,0 +1,194 @@
+{
+  "published": false,
+  "headline": "Dealer-level repairs, without the dealer.",
+  "intro": "Forks Auto Repair is run by Stephen Cook, a former Toyota master technician. When you book in, you deal with the person who actually works on your car.",
+  "about": "Stephen spent years as a master technician at Toyota, working on everything from routine maintenance to hard-to-find electrical faults. He opened Forks Auto Repair to give drivers that same level of skill with straight answers and fair prices.\n\nYou'll get an estimate before any work starts, and he'll call you before doing anything that wasn't on it.",
+  "aboutPhoto": "",
+  "phone": "",
+  "textPhone": "",
+  "email": "",
+  "street": "",
+  "town": "",
+  "province": "ON",
+  "postal": "",
+  "hours": [
+    {
+      "day": "Monday",
+      "closed": false,
+      "open": "08:00",
+      "close": "17:00"
+    },
+    {
+      "day": "Tuesday",
+      "closed": false,
+      "open": "08:00",
+      "close": "17:00"
+    },
+    {
+      "day": "Wednesday",
+      "closed": false,
+      "open": "08:00",
+      "close": "17:00"
+    },
+    {
+      "day": "Thursday",
+      "closed": false,
+      "open": "08:00",
+      "close": "17:00"
+    },
+    {
+      "day": "Friday",
+      "closed": false,
+      "open": "08:00",
+      "close": "17:00"
+    },
+    {
+      "day": "Saturday",
+      "closed": true,
+      "open": "09:00",
+      "close": "13:00"
+    },
+    {
+      "day": "Sunday",
+      "closed": true,
+      "open": "",
+      "close": ""
+    }
+  ],
+  "hoursNote": "",
+  "services": [
+    {
+      "name": "Oil and filter change",
+      "price": "",
+      "from": true,
+      "desc": "Conventional or synthetic, with a multi-point inspection"
+    },
+    {
+      "name": "Brake pads and rotors",
+      "price": "",
+      "from": true,
+      "desc": "Per axle, parts and labour"
+    },
+    {
+      "name": "Check engine light diagnosis",
+      "price": "",
+      "from": false,
+      "desc": "Scan, testing and a clear explanation of what's wrong"
+    },
+    {
+      "name": "Tire changeover",
+      "price": "",
+      "from": false,
+      "desc": "Seasonal swap on rims, with balance check"
+    },
+    {
+      "name": "Battery test and replacement",
+      "price": "",
+      "from": true,
+      "desc": ""
+    },
+    {
+      "name": "Pre-purchase inspection",
+      "price": "",
+      "from": false,
+      "desc": "Know what you're buying before you buy it"
+    },
+    {
+      "name": "Suspension and steering",
+      "price": "",
+      "from": true,
+      "desc": ""
+    },
+    {
+      "name": "Scheduled maintenance",
+      "price": "",
+      "from": true,
+      "desc": "Factory service intervals, any make"
+    }
+  ],
+  "priceNote": "Prices before HST. Final cost depends on your vehicle, and you'll get an estimate before work starts.",
+  "photos": [],
+  "googleReviewsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJx-viONM104kRs9l4vvdfvN0",
+  "googlePlaceId": "ChIJx-viONM104kRs9l4vvdfvN0",
+  "facebookUrl": "https://www.facebook.com/p/Forks-Auto-Repair-100064029906169/",
+  "instagramUrl": "",
+  "banner": {
+    "on": false,
+    "text": "Winter tire changeovers are booking now. Beat the first snow.",
+    "linkText": "Book a time",
+    "link": "/book"
+  },
+  "heroPhoto": "",
+  "proof": [
+    "Former Toyota master technician",
+    "Estimate before any work starts",
+    "Straight answers and fair prices",
+    "Easy to reach from Welland, Port Colborne and Dunnville"
+  ],
+  "specialtiesTitle": "The jobs other shops send away",
+  "specialtiesIntro": "",
+  "specialties": [
+    {
+      "title": "Exhaust manifold repair",
+      "desc": "Cracked manifolds, leaking gaskets and broken or seized studs, removed and replaced without wrecking the head.",
+      "photo": ""
+    },
+    {
+      "title": "Toyota & Lexus specialist",
+      "desc": "Dealer-level diagnosis and factory service intervals from someone who did it at the dealer for years.",
+      "photo": ""
+    },
+    {
+      "title": "Electrical & wiring",
+      "desc": "Warning lights, no-starts, battery drain and damaged wiring, tracked down properly instead of guessed at.",
+      "photo": ""
+    }
+  ],
+  "beforeAfter": [],
+  "aboutTitle": "Meet Stephen",
+  "credentials": "",
+  "faqs": [
+    {
+      "q": "Will I know the price before you start?",
+      "a": "Yes. You get an estimate before any work starts, and Stephen calls you before doing anything that wasn't on it."
+    },
+    {
+      "q": "How do I book?",
+      "a": "Call us or book online. Online bookings are requests: we'll call, text or email to confirm the day and time."
+    },
+    {
+      "q": "Can I just show up?",
+      "a": "You can. Scan the code at the counter to check in on your phone and we'll fit you in when we can. Booking ahead is the surest way to be seen the same day."
+    },
+    {
+      "q": "Do you work on makes other than Toyota?",
+      "a": ""
+    },
+    {
+      "q": "How can I pay?",
+      "a": ""
+    }
+  ],
+  "featuredReviews": [
+    {
+      "text": "Great, honest mechanics. I drive 35 minutes to have my vehicle serviced by Steve. Highly recommend.",
+      "author": "Google review",
+      "stars": 5
+    },
+    {
+      "text": "Very knowledgeable in diagnosing and repairing my Tundra. Highly recommend!",
+      "author": "Google review",
+      "stars": 5
+    },
+    {
+      "text": "Finally a mechanic I can trust! Since Steve opened I have been taking both my vehicles in for routine service. Efficient, honest…",
+      "author": "Google review",
+      "stars": 5
+    },
+    {
+      "text": "Had to get a ball joint my Tacoma quick job great service!",
+      "author": "Google review",
+      "stars": 5
+    }
+  ]
+}

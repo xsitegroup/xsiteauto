@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>XSite Auto</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/icons/app/192.png">
+<meta name="theme-color" content="#1d5ea6">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{--bg:#eceff3;--surface:#fff;--ink:#15202b;--muted:#5a6877;--line:#d3dae2;--accent:#1d5ea6;--accent-ink:#fff;--bad:#b0351f;--good:#22714a}
+@media (prefers-color-scheme:dark){:root{--bg:#0e141b;--surface:#17202a;--ink:#e4eaf0;--muted:#93a2b2;--line:#2a3642;--accent:#6da7ea;--accent-ink:#0b1824;--bad:#ef7a62;--good:#5cc48a;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 "IBM Plex Sans",system-ui,-apple-system,sans-serif}
+main{min-height:100dvh;display:grid;place-items:center;padding:24px 16px}
+form{width:min(400px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 22px;display:flex;flex-direction:column;gap:14px}
+h1{font:700 30px/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.03em;margin:0}
+p{margin:0;color:var(--muted)}
+a{color:var(--accent)}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:11px 12px;text-transform:none;letter-spacing:0}
+button{font:600 16px inherit;font-family:inherit;background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:12px;cursor:pointer}
+button:disabled{opacity:.6}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.err{color:var(--bad);font-size:14px;min-height:1em}.ok{color:var(--good)}
+[hidden]{display:none!important}
+</style>
+</head><body>
+<main>
+  <form id="f" novalidate>
+    <h1 id="h">Reset password</h1>
+    <p id="lede">Enter your email and we'll send you a link to choose a new password.</p>
+    <label id="nameRow" hidden>Your name<input id="name" autocomplete="name"></label>
+    <label id="emailRow">Email<input id="email" type="email" autocomplete="username" inputmode="email"></label>
+    <label id="pwRow" hidden>New password (at least 10 characters)<input id="password" type="password" autocomplete="new-password" minlength="10"></label>
+    <div class="err" id="err" role="alert"></div>
+    <button id="go" type="submit">Send the link</button>
+    <p style="font-size:14px"><a href="/login">Back to sign in</a></p>
+  </form>
+</main>
+<script>
+// Three uses: /reset (ask for a link), /reset?token= (choose a new password), /invite?token= (join a shop).
+const $=id=>document.getElementById(id),token=new URLSearchParams(location.search).get("token")||"",invite=location.pathname==="/invite";
+const mode=invite?"invite":token?"set":"ask";
+if(mode!=="ask"){$("emailRow").hidden=true;$("pwRow").hidden=false;$("go").textContent=invite?"Join and sign in":"Save and sign in"}
+if(mode==="set"){$("h").textContent="New password";$("lede").textContent="Choose a new password for XSite Auto."}
+if(mode==="invite"){$("h").textContent="Join your shop";$("lede").textContent="Checking your invite…";$("nameRow").hidden=false;
+  fetch("/api/team/accept?token="+encodeURIComponent(token)).then(r=>r.json().then(d=>({ok:r.ok,d}))).then(({ok,d})=>{
+    if(!ok){$("lede").textContent=d.error;$("go").disabled=true;return}
+    $("h").textContent=`Join ${d.shopName}`;$("lede").textContent=`You're joining ${d.shopName} on XSite Auto as ${d.email}. Choose a password to finish.`;$("name").value=d.name||""});}
+$("f").addEventListener("submit",async e=>{
+  e.preventDefault();$("err").textContent="";$("err").className="err";$("go").disabled=true;
+  const call=(u,b)=>fetch(u,{method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",body:JSON.stringify(b)}).then(r=>r.json().then(d=>({ok:r.ok,d})));
+  try{
+    if(mode==="ask"){await call("/api/auth/forgot",{email:$("email").value});$("err").className="err ok";$("err").textContent="If that email has an account, a link is on its way. Check your inbox.";return}
+    const {ok,d}=mode==="set"?await call("/api/auth/reset",{token,password:$("password").value}):await call("/api/team/accept",{token,name:$("name").value,password:$("password").value});
+    if(ok){location.href="/";return}
+    $("err").textContent=d.error||"That didn't work. Please try again.";
+  }catch(x){$("err").textContent="Can't reach XSite Auto. Check your connection."}
+  finally{$("go").disabled=false}
+});
+</script>
+</body></html>

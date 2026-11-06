@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start your free trial · XSite Auto</title>
+<meta name="description" content="Try XSite Auto free for 14 days. No credit card.">
+<link rel="icon" href="/icons/app/192.png">
+<meta name="theme-color" content="#1A5FA8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--blue:#1A5FA8;--navy:#0E2A4F;--muted:#44587a;--soft:#F2F7FD;--line:#c9d6e6;--bad:#b0351f}
+*{box-sizing:border-box}
+html,body{margin:0;background:linear-gradient(180deg,#F2F7FD 0%,#fff 100%);color:var(--navy);font:16px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+a{color:var(--blue)}
+header{max-width:1200px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo b{font:700 24px Arial,Helvetica,sans-serif;color:var(--blue)}
+header span{font-size:15px;color:var(--muted)}
+main{max-width:1200px;margin:0 auto;padding:24px 24px 64px;display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start}
+.pitch{flex:1 1 360px;min-width:0;padding-top:20px}
+.pill{display:inline-block;font-size:14px;font-weight:700;color:var(--blue);background:#E3EEFA;padding:7px 14px;border-radius:999px;margin:0 0 18px}
+h1{margin:0 0 18px;font-weight:800;font-size:clamp(34px,4.6vw,52px);line-height:1.05;letter-spacing:-.03em}
+.pitch>p{font-size:19px;line-height:1.6;color:var(--muted);margin:0 0 28px}
+.steps{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:14px;align-items:flex-start}
+.steps .n{flex:0 0 34px;height:34px;border-radius:10px;background:#E3EEFA;color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800}
+.steps li:first-child .n{background:var(--blue);color:#fff}
+.steps b{display:block;font-size:17px}.steps small{font-size:15px;color:var(--muted)}
+.pitch>p.fine{margin:32px 0 0;font-size:14px;line-height:1.6;color:#5d6f8c}
+.card{flex:1 1 500px;min-width:0;background:#fff;border:1px solid #e3e9f1;border-radius:18px;box-shadow:0 24px 60px rgba(14,42,79,.12);padding:32px;display:flex;flex-direction:column;gap:16px}
+.sec{margin:0;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.sec.gap{margin-top:8px;padding-top:18px;border-top:1px solid #eef2f7}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.g3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:560px){.g2,.g3{grid-template-columns:1fr}.card{padding:22px}}
+label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600}
+label small{font-weight:400;color:#5d6f8c;font-size:13px}
+input,select{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--bad)}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.agree{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;font-size:14px;line-height:1.5;color:#33476a}
+.agree input{flex:0 0 auto;width:18px;height:18px;margin-top:2px}
+.go{font:inherit;font-weight:700;font-size:18px;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:16px;cursor:pointer;box-shadow:0 8px 20px rgba(26,95,168,.25)}
+.go:disabled{opacity:.6;cursor:default}
+.err{color:var(--bad);font-size:15px;min-height:1px}
+.center{text-align:center;font-size:13px;color:#5d6f8c;margin:0}
+.code{font-size:30px;letter-spacing:.35em;text-align:center;font-weight:700}
+.trap{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+[hidden]{display:none!important}
+</style>
+</head><body>
+<header>
+  <a class="logo" href="https://xsiteauto.com"><svg width="30" height="34" viewBox="1388 976 2767 3116" aria-hidden="true"><path fill="#5B9DC7" d="M 1540,2399 L 2231,3464 C 2358,3660 2621,3716 2818,3589 L 3883,2898 C 4079,2772 4135,2508 4008,2312 L 3317,1246 C 3190,1052 2927,996 2731,1121 L 1665,1812 C 1471,1939 1415,2202 1540,2399 Z"/><path fill="#307DB1" d="M 4004,2776 L 3292,3828 C 3162,4021 2897,4072 2703,3942 L 1651,3230 C 1459,3100 1408,2835 1538,2641 L 2249,1589 C 2379,1397 2644,1346 2838,1476 L 3890,2187 C 4083,2317 4134,2582 4004,2776 Z"/><path fill="#FFFFFF" d="M 3457,1893 L 3298,2164 C 3271,2208 3241,2272 3241,2272 L 3234,2272 C 3234,2272 3204,2208 3177,2164 L 2735,1425 C 2593,1379 2436,1409 2323,1507 L 2979,2543 2270,3647 2593,3866 3187,2913 C 3211,2876 3234,2822 3234,2822 L 3241,2822 C 3241,2822 3264,2876 3288,2913 L 3583,3399 3819,3050 3496,2543 3769,2104 3457,1893 Z"/></svg><b>XSite Auto</b></a>
+  <span>Already have an account? <a href="/login"><b>Sign in</b></a></span>
+</header>
+<main>
+  <div class="pitch">
+    <p class="pill">14 days free · No credit card</p>
+    <h1>Try XSite Auto in your shop, free for 14 days</h1>
+    <p>Your own shop account is ready in about two minutes. Put online booking on your website, bring in your customers from QuickBooks, and run a real week of jobs on it.</p>
+    <ul class="steps">
+      <li><span class="n">1</span><div><b>Create your account</b><small>Your details and your shop's. That's it.</small></div></li>
+      <li><span class="n">2</span><div><b>Add booking to your website</b><small>Copy one line into WordPress, Wix, GoDaddy or Squarespace.</small></div></li>
+      <li><span class="n">3</span><div><b>Import from QuickBooks</b><small>Bring your customer list over so day one feels like home.</small></div></li>
+    </ul>
+    <p class="fine">After 14 days, keep it for $495 USD setup and $99 USD a month, or simply let it lapse. Nothing is charged unless you choose to continue.</p>
+  </div>
+
+  <form class="card" id="f" novalidate aria-label="Start your free trial">
+    <p class="sec">About you</p>
+    <div class="g2">
+      <label>Your name<input name="name" autocomplete="name" required></label>
+      <label>Mobile phone<input name="mobile" type="tel" inputmode="tel" autocomplete="tel" required></label>
+    </div>
+    <label>Email <small>This is your sign-in</small><input name="email" type="email" inputmode="email" autocomplete="email" required></label>
+    <label>Password <small>At least 10 characters</small><input name="password" type="password" autocomplete="new-password" minlength="10" required></label>
+
+    <p class="sec gap">About your shop</p>
+    <div class="g2">
+      <label>Shop name<input name="shopName" autocomplete="organization" required></label>
+      <label>Shop phone<input name="shopPhone" type="tel" inputmode="tel" required></label>
+    </div>
+    <div><span style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Country</span>
+      <div class="seg" role="group" aria-label="Country"><button type="button" data-country="US" aria-pressed="true">United States</button><button type="button" data-country="CA" aria-pressed="false">Canada</button></div></div>
+    <label>Street address<input name="street" autocomplete="address-line1" required></label>
+    <div class="g3">
+      <label>City<input name="city" autocomplete="address-level2" required></label>
+      <label><span id="regionLbl">State</span><select name="region" autocomplete="address-level1" required></select></label>
+      <label><span id="postalLbl">ZIP code</span><input name="postal" autocomplete="postal-code" required></label>
+    </div>
+    <div class="g2">
+      <label>Shop website <small>Optional</small><input name="website" inputmode="url" placeholder="yourshop.com"></label>
+      <label>Technicians<select name="techs" required><option value="">Choose…</option><option value="1">Just me</option><option value="2-3">2 to 3</option><option value="4-6">4 to 6</option><option value="7-10">7 to 10</option><option value="10+">More than 10</option></select></label>
+    </div>
+    <div class="trap" aria-hidden="true"><label>Leave this empty<input name="website2" tabindex="-1" autocomplete="off"></label></div>
+    <label class="agree"><input type="checkbox" name="agree"><span>I agree to the XSite Auto <a href="https://xsiteauto.com/terms" target="_blank" rel="noopener">terms</a> and <a href="https://xsiteauto.com/privacy" target="_blank" rel="noopener">privacy policy</a>, and to receive emails about my trial.</span></label>
+    <div id="ts"></div>
+    <div class="err" id="err" role="alert"></div>
+    <button class="go" id="go" type="submit">Start my free trial</button>
+    <p class="center">No credit card needed. We'll email a 6-digit code to confirm your address.</p>
+  </form>
+
+  <form class="card" id="cf" novalidate hidden aria-label="Confirm your email">
+    <p class="sec">Check your email</p>
+    <h2 style="margin:0;font-size:28px;letter-spacing:-.02em">Enter your 6-digit code</h2>
+    <p style="margin:0;color:var(--muted)">We sent it to <b id="sentTo"></b>. It works for 15 minutes.</p>
+    <label>Code<input class="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+    <div class="err" id="cerr" role="alert"></div>
+    <button class="go" id="cgo" type="submit">Create my shop</button>
+    <p class="center"><a href="#" id="back">Use a different email</a></p>
+  </form>
+</main>
+<script>
+const US={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+const CA={AB:"Alberta",BC:"British Columbia",MB:"Manitoba",NB:"New Brunswick",NL:"Newfoundland and Labrador",NS:"Nova Scotia",NT:"Northwest Territories",NU:"Nunavut",ON:"Ontario",PE:"Prince Edward Island",QC:"Quebec",SK:"Saskatchewan",YT:"Yukon"};
+const f=document.getElementById("f"),cf=document.getElementById("cf"),err=document.getElementById("err"),cerr=document.getElementById("cerr");
+let country=/^en-CA|fr-CA/.test(navigator.language||"")?"CA":"US",signupId="",tsToken="",started=Date.now();
+function setCountry(c){country=c;document.querySelectorAll("[data-country]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.country===c)));
+  const list=c==="CA"?CA:US,sel=f.region,keep=sel.value;sel.innerHTML=`<option value="">Choose…</option>`+Object.entries(list).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");if(list[keep])sel.value=keep;
+  document.getElementById("regionLbl").textContent=c==="CA"?"Province":"State";document.getElementById("postalLbl").textContent=c==="CA"?"Postal code":"ZIP code";
+  f.postal.placeholder=c==="CA"?"L0S 1E5":"14226"}
+document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>setCountry(b.dataset.country));
+setCountry(country);
+const tel=e=>{let d=e.target.value.replace(/\D/g,"");if(d.length===11&&d[0]==="1")d=d.slice(1);if(d.length>10)return;e.target.value=d.slice(0,3)+(d.length>3?"-"+d.slice(3,6):"")+(d.length>6?"-"+d.slice(6):"")};
+f.mobile.addEventListener("input",tel);f.shopPhone.addEventListener("input",tel);
+// Spam check (Cloudflare Turnstile), only when XSite has switched it on.
+fetch("/api/public/shop").then(r=>r.json()).then(c=>{if(!c.turnstileSiteKey)return;window.tsReady=()=>turnstile.render("#ts",{sitekey:c.turnstileSiteKey,callback:t=>tsToken=t});
+  const s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=tsReady";s.async=true;document.head.appendChild(s)}).catch(()=>{});
+f.addEventListener("submit",async e=>{
+  e.preventDefault();err.textContent="";f.querySelectorAll("[aria-invalid]").forEach(x=>x.removeAttribute("aria-invalid"));
+  const go=document.getElementById("go");go.disabled=true;go.textContent="Checking…";
+  const body=Object.fromEntries(new FormData(f));body.agree=f.agree.checked;body.country=country;body.turnstile=tsToken;
+  body.source=new URLSearchParams(location.search).get("ref")||document.referrer.replace(/^https?:\/\//,"").split("/")[0]||"";
+  try{
+    const r=await fetch("/api/signup/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(r.ok){signupId=d.id;document.getElementById("sentTo").textContent=d.email;f.hidden=true;cf.hidden=false;cf.code.focus();
+      if(d.devCode){cf.code.value=d.devCode;cerr.textContent="Test mode: code filled in for you."}window.scrollTo({top:0,behavior:"smooth"});}
+    else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
+  }catch(x){err.textContent="Can't reach XSite Auto. Check your connection and try again."}
+  go.disabled=false;go.textContent="Start my free trial";
+  if(window.turnstile&&document.querySelector("#ts iframe")){try{turnstile.reset("#ts");tsToken=""}catch(x){}}
+});
+cf.code.addEventListener("input",()=>{cf.code.value=cf.code.value.replace(/\D/g,"").slice(0,6);if(cf.code.value.length===6)cf.requestSubmit()});
+cf.addEventListener("submit",async e=>{
+  e.preventDefault();cerr.textContent="";const go=document.getElementById("cgo");go.disabled=true;go.textContent="Creating your shop…";
+  try{
+    const r=await fetch("/api/signup/verify",{method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",body:JSON.stringify({id:signupId,code:cf.code.value})});
+    const d=await r.json().catch(()=>({}));
+    if(r.ok){location.href="/#setup";return}
+    cerr.textContent=d.error||"That didn't work. Please try again.";
+  }catch(x){cerr.textContent="Can't reach XSite Auto. Check your connection and try again."}
+  go.disabled=false;go.textContent="Create my shop";
+});
+document.getElementById("back").onclick=e=>{e.preventDefault();cf.hidden=true;f.hidden=false;cf.code.value="";cerr.textContent=""};
+</script>
+</body></html>
