@@ -12,7 +12,7 @@ export function fmt12(t) {
 }
 
 // The shop page's booking card. Pick a service, a day and an open time, then fill in the details.
-export default function BookingFlow({ children, services, shopName, phone, tel, base = "", postalLabel, embed = false }) {
+export default function BookingFlow({ children, services, shopName, phone, tel, base = "", postalLabel, odoUnit, embed = false }) {
   const [avail, setAvail] = useState(null);   // null = loading, false = failed
   const [service, setService] = useState("");
   const [date, setDate] = useState("");
@@ -108,7 +108,7 @@ export default function BookingFlow({ children, services, shopName, phone, tel, 
     <section id="bk-details" className="bk-details">
       <p className="eyebrow">Almost done</p>
       <h2>Your details</h2>
-      <BookForm checkin={false} base={base} postalLabel={postalLabel} shopName={shopName} phone={phone} tel={tel}
+      <BookForm checkin={false} base={base} postalLabel={postalLabel} odoUnit={odoUnit} shopName={shopName} phone={phone} tel={tel}
         slot={{ date, time, service, label: `${longDay(date)} at ${fmt12(time)}` }} onTaken={onTaken} />
     </section>
   );

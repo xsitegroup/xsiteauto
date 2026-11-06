@@ -77,6 +77,7 @@ export default async function Book({ searchParams }) {
   const embed = sp?.embed !== undefined;
   const tel = telHref(site.phone);
   const pl = postalLabel(shop.country);
+  const odoUnit = shop.country === "US" ? "mi" : "km";
   if (!takesBookings(shop)) return <>{!embed && <TopBar site={site} base={base} />}<CallUs site={site} embed={embed} /></>;
 
   // Inside a shop's own website: just the booking card, sized to fit the page around it.
@@ -84,7 +85,7 @@ export default async function Book({ searchParams }) {
     const services = site.services.filter((s) => has(s.name));
     return (
       <main className="bp embed" style={accentStyle(sp?.color)}>
-        <BookingFlow embed base={base} postalLabel={pl} services={services.map((s) => s.name)} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel} />
+        <BookingFlow embed base={base} postalLabel={pl} odoUnit={odoUnit} services={services.map((s) => s.name)} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel} />
         <p className="bk-by">Online booking by XSite Auto</p>
         <EmbedSize />
       </main>
@@ -103,7 +104,7 @@ export default async function Book({ searchParams }) {
               <h1>Check in your vehicle</h1>
               <p className="lede">Fill this in while we take a look. It saves us writing it all down, and we'll keep it on file for next time.</p>
             </div>
-            <BookForm checkin base={base} postalLabel={pl} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel} />
+            <BookForm checkin base={base} postalLabel={pl} odoUnit={odoUnit} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel} />
           </div>
         </main>
       </>
@@ -142,7 +143,7 @@ export default async function Book({ searchParams }) {
             </p>
             {tags.length > 0 && <ul className="bp-tags">{tags.map((t) => <li key={t}>{t}</li>)}</ul>}
           </div>
-          <BookingFlow base={base} postalLabel={pl} services={services.map((s) => s.name)} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel}>
+          <BookingFlow base={base} postalLabel={pl} odoUnit={odoUnit} services={services.map((s) => s.name)} shopName={site.shopName} phone={fmtPhone(site.phone)} tel={tel}>
             <div className="bp-info">
 
               <nav className="bp-tabs" aria-label="On this page">

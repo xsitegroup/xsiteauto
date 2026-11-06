@@ -1663,12 +1663,14 @@ function histHtml(c){
 /* ---------- online requests ---------- */
 const newRequests=()=>Object.values(S.requests||{}).filter(r=>r.status==="new").sort((a,b)=>(b.submitted||"").localeCompare(a.submitted||""));
 const reqVeh=r=>{const v=r.vehicle||{};return [v.year,v.make,v.model].filter(Boolean).join(" ")+(v.plate?` · ${v.plate}`:"")};
+const VISIT={wait:"Waiting",drop:"Leaving the vehicle",ride:"Needs a ride"};
+const reqOdo=r=>r.odometer?`${Number(r.odometer).toLocaleString("en-US")} ${r.odoUnit==="mi"?"mi":"km"}`:"";
 const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);if(m<1)return"just now";if(m<60)return m+" min ago";const h=Math.round(m/60);if(h<24)return h+" h ago";return new Date(iso).toLocaleDateString("en-CA",{month:"short",day:"numeric"})};
 function reqItem(r){
   return `<button class="item" type="button" data-req="${esc(r.id)}">
     <div class="when"><span class="rq-kind">${r.kind==="checkin"?"Check-in":"Booking"}</span>${r.returning?`<br><span class="rq-kind" style="color:var(--good)">Returning</span>`:""}</div>
     <div style="min-width:0"><div class="who">${esc(r.name)}</div>
-    <div class="what">${esc([reqVeh(r)||r.vehicleNote,r.concern].filter(Boolean).join(" · "))}</div></div>
+    <div class="what">${r.visit?`<b>${esc(VISIT[r.visit]||"")}</b> · `:""}${esc([reqVeh(r)||r.vehicleNote,r.concern].filter(Boolean).join(" · "))}</div></div>
     <div class="right"><span class="rq-when">${esc(ago(r.submitted))}</span></div></button>`;
 }
 const normName=n=>String(n||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
@@ -1714,7 +1716,8 @@ function drawRequest(){
   <div class="sheet-b">
     <div class="rq-box"><p><b>${esc(r.name)}</b> · <span class="mono">${esc(fmtPhone(r.phone))}</span>${r.email?` · ${esc(r.email)}`:""}</p>
       ${r.returning?`<p><span class="pill ready">Says they've been here before</span></p>`:""}
-      ${hasVeh?`<p>${esc(reqVeh(r))}</p>`:r.vehicleNote?`<p>Vehicle: ${esc(r.vehicleNote)}</p>`:""}
+      ${hasVeh?`<p>${esc(reqVeh(r))}${reqOdo(r)?` · ${esc(reqOdo(r))}`:""}</p>`:r.vehicleNote?`<p>Vehicle: ${esc(r.vehicleNote)}${reqOdo(r)?` · ${esc(reqOdo(r))}`:""}</p>`:reqOdo(r)?`<p>${esc(reqOdo(r))}</p>`:""}
+      ${r.visit?`<p><b>${esc(VISIT[r.visit]||"")}</b></p>`:""}
       <p>${esc(r.concern)}</p>
       <p class="muted" style="font-size:13px">Sent ${esc(ago(r.submitted))}${when?` · Prefers ${esc(when)}`:""} · Reach by ${esc(r.contactBy||"call")}</p></div>
     <h2>Whose record is this?</h2>
@@ -1761,7 +1764,8 @@ async function acceptRequest(book){
     const note=(r.vehicleNote||"").toLowerCase(), words=note.split(/[^a-z0-9]+/).filter(w=>w.length>2);
     const picked=(base.vehicles||[]).find(x=>words.some(w=>vehLabel(x).toLowerCase().includes(w)))||(base.vehicles||[])[0];
     openJob(null,{customerId:cid,vehicle:onFile?vehLabel(onFile):hasVeh?reqVeh(r):picked?vehLabel(picked):(r.vehicleNote||""),concern:r.concern||"",date:r.prefDate||today(),
-      time:/^\d{2}:\d{2}$/.test(r.prefTime||"")?r.prefTime:r.prefTime==="afternoon"?"13:00":"09:00",status:r.kind==="checkin"?"inshop":"booked",fromRequest:r.id,contactBy:r.contactBy||"call"});
+      time:/^\d{2}:\d{2}$/.test(r.prefTime||"")?r.prefTime:r.prefTime==="afternoon"?"13:00":"09:00",status:r.kind==="checkin"?"inshop":"booked",fromRequest:r.id,contactBy:r.contactBy||"call",
+      odometer:r.odometer?Number(r.odometer).toLocaleString("en-US")+(r.odoUnit==="mi"?" mi":" km"):"",notes:r.visit?VISIT[r.visit]||"":""});
   }else closeSheet();
 }
 

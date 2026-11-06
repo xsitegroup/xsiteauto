@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const blank = { name: "", phone: "", email: "", street: "", city: "", postal: "", year: "", make: "", model: "", plate: "",
-  concern: "", prefDate: "", prefTime: "any", contactBy: "call", consent: false, website: "", returning: false, vehicleNote: "" };
+  concern: "", prefDate: "", prefTime: "any", contactBy: "call", consent: false, website: "", returning: false, vehicleNote: "", odometer: "", visit: "" };
+const fmtOdo = (v) => { const d = String(v).replace(/\D/g, "").slice(0, 7); return d ? Number(d).toLocaleString("en-US") : ""; };
 
 function fmtPhoneTyping(v) {
   let d = v.replace(/\D/g, "");
@@ -12,7 +13,7 @@ function fmtPhoneTyping(v) {
 }
 const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken, base = "", postalLabel = "Postal code" }) {
+export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken, base = "", postalLabel = "Postal code", odoUnit = "km" }) {
   const [f, setF] = useState(blank);
   const [state, setState] = useState("idle"); // idle | sending | done
   const [taken, setTaken] = useState(false);
@@ -21,7 +22,7 @@ export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken,
   const [onFile, setOnFile] = useState(null); // what's missing from a returning customer's file (never the details)
   const started = useRef(Date.now());
   const errRef = useRef(null);
-  const set = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.type === "checkbox" ? e.target.checked : k === "phone" ? fmtPhoneTyping(e.target.value) : e.target.value }));
+  const set = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.type === "checkbox" ? e.target.checked : k === "phone" ? fmtPhoneTyping(e.target.value) : k === "odometer" ? fmtOdo(e.target.value) : e.target.value }));
   const today = ymd(new Date());
   const max = ymd(new Date(Date.now() + 90 * 864e5));
 
@@ -52,7 +53,7 @@ export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken,
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(f.returning
-          ? { name: f.name, phone: f.phone, email: f.email, street: f.street, city: f.city, postal: f.postal, year: f.year, make: f.make, model: f.model, plate: f.plate, concern: f.concern, prefDate: f.prefDate, prefTime: f.prefTime, contactBy: f.contactBy, consent: f.consent, website: f.website, returning: true, kind: checkin ? "checkin" : "booking", elapsed: Date.now() - started.current, ...when }
+          ? { name: f.name, phone: f.phone, email: f.email, street: f.street, city: f.city, postal: f.postal, year: f.year, make: f.make, model: f.model, plate: f.plate, odometer: f.odometer, visit: f.visit, concern: f.concern, prefDate: f.prefDate, prefTime: f.prefTime, contactBy: f.contactBy, consent: f.consent, website: f.website, returning: true, kind: checkin ? "checkin" : "booking", elapsed: Date.now() - started.current, ...when }
           : { ...f, returning: false, kind: checkin ? "checkin" : "booking", elapsed: Date.now() - started.current, ...when }),
       });
       const d = await r.json().catch(() => ({}));
@@ -146,9 +147,20 @@ export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken,
           <label className="fld"><span className="fl">Model</span><input id="b-model" value={f.model} onChange={set("model")} placeholder="RAV4" required /></label>
           <label className="fld"><span className="fl">Plate <i>(optional)</i></span><input id="b-plate" value={f.plate} onChange={set("plate")} autoCapitalize="characters" /></label>
         </div>
+        <label className="fld odo"><span className="fl">{odoUnit === "mi" ? "Miles" : "Kilometres"} on it <i>(optional, a rough number is fine)</i></span><input id="b-odo" value={f.odometer} onChange={set("odometer")} inputMode="numeric" placeholder={odoUnit === "mi" ? "92,000" : "148,000"} maxLength={9} /></label>
         <label className="fld"><span className="fl">{picked ? <>Anything else we should know? <i>(optional)</i></> : "What does it need?"}</span><textarea id="b-concern" value={f.concern} onChange={set("concern")} rows={4} placeholder={picked ? "Noises, warning lights, when it started…" : "Noise from the front when braking, check engine light on, oil change due…"} required={!picked} /></label>
       </fieldset>
 
+      {checkin && (
+        <fieldset>
+          <legend>While we work on it</legend>
+          <div className="radio-row" role="radiogroup" aria-label="Waiting or leaving the vehicle">
+            {[["wait", "I'll wait"], ["drop", "I'm leaving it"], ["ride", "I need a ride"]].map(([v, l]) => (
+              <label key={v} className="radio"><input type="radio" name="visit" value={v} checked={f.visit === v} onChange={set("visit")} />{l}</label>
+            ))}
+          </div>
+        </fieldset>
+      )}
       {!checkin && slot && (
         <fieldset>
           <legend>How should we confirm?</legend>
