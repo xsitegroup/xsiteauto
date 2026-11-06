@@ -1288,17 +1288,19 @@ function openConfirm(id){
   const prefer=j.contactBy||"call", phone=digits(c.phone||"");
   const msg=confirmText(j,c);
   const smsHref=phone?`sms:+1${phone}?&body=${encodeURIComponent(msg)}`:"";
+  // Phones, iPads and Macs have Messages; Windows and Linux computers usually have nothing to open a text link.
+  const noSms=/Windows|Linux|CrOS/i.test(navigator.userAgent)&&!/Android/i.test(navigator.userAgent);
   openSheet(`<div class="sheet-h"><h1>Confirm with ${esc((c.name||"").split(" ")[0])}</h1><div class="spacer"></div><button class="btn small" type="button" id="xClose">Done</button></div>
   <div class="sheet-b">
     <p class="banner">${esc(c.name)} is booked for <b>${esc(fmtDay(j.date))}${j.time?" at "+esc(fmtTime(j.time)):""}</b>. They asked to be confirmed by <b>${prefer==="text"?"text":prefer==="email"?"email":"phone call"}</b>.</p>
     <label class="f">Message<textarea id="cf_msg" rows="4">${esc(msg)}</textarea></label>
     <div class="row" style="gap:8px;flex-wrap:wrap">
-      ${smsHref?`<a class="btn ${prefer==="text"?"primary":""}" id="cf_sms" href="${esc(smsHref)}">Text confirmation</a>`:""}
+      ${smsHref?(noSms?`<button class="btn ${prefer==="text"?"primary":""}" type="button" id="cf_smscopy">Copy text for your phone</button>`:`<a class="btn ${prefer==="text"?"primary":""}" id="cf_sms" href="${esc(smsHref)}">Text confirmation</a>`):""}
       <button class="btn ${prefer==="email"?"primary":""}" type="button" id="cf_email" ${c.email?"":"disabled"}>Email confirmation</button>
       <button class="btn" type="button" id="cf_copy">Copy message</button>
       ${phone?`<a class="btn ${prefer==="call"?"primary":""}" href="tel:+1${phone}" id="cf_call">Call ${esc(fmtPhone(c.phone))}</a>`:""}
     </div>
-    <p class="ws-help">${c.email?`Email sends from the shop's address with a calendar invite.`:"No email on file for this customer."} Text confirmation opens Messages on your phone with the message ready to send.</p>
+    <p class="ws-help">${c.email?`Email sends from the shop's address with a calendar invite.`:"No email on file for this customer."} ${noSms?"On this computer, copy the text and send it from your phone.":"Text confirmation opens Messages with the message ready to send."}</p>
     <div id="cf_out"></div>
   </div>`);
   const q=s=>sheet.querySelector(s);
@@ -1306,6 +1308,9 @@ function openConfirm(id){
   const mark=async by=>{const d={...S.jobs[id],confirmedAt:new Date().toISOString(),confirmedBy:by};await write(()=>db.doc("jobs/"+id).set(d));S.jobs[id]=d};
   const ms=q("#cf_msg");
   const sm=q("#cf_sms");if(sm){ms.addEventListener("input",()=>{sm.href=`sms:+1${phone}?&body=${encodeURIComponent(ms.value)}`});sm.addEventListener("click",()=>{mark("text");q("#cf_out").innerHTML=`<p class="banner">Marked as confirmed by text. Tap Done when it's sent.</p>`})}
+  const sc=q("#cf_smscopy");if(sc)sc.onclick=async()=>{let ok=true;try{await navigator.clipboard.writeText(ms.value)}catch(e){ok=false;ms.select()}
+    q("#cf_out").innerHTML=`<div class="banner">${ok?"Copied.":"Select the message and copy it."} Text it to <b>${esc(fmtPhone(phone))}</b> from your phone, then <button class="btn small" type="button" id="cf_texted">Mark as texted</button></div>`;
+    q("#cf_texted").onclick=async()=>{await mark("text");q("#cf_out").innerHTML=`<p class="banner">Marked as confirmed by text.</p>`}};
   const cl=q("#cf_call");if(cl)cl.addEventListener("click",()=>mark("phone"));
   q("#cf_copy").onclick=async()=>{try{await navigator.clipboard.writeText(ms.value);toast("Message copied")}catch(e){ms.select()}};
   const em=q("#cf_email");if(em)em.onclick=async()=>{em.disabled=true;em.textContent="Sending…";
