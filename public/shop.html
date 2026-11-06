@@ -229,8 +229,11 @@ label.ck input{width:18px;height:18px;min-height:0;flex:none;margin:0;accent-col
 .ws-day label.ck{grid-area:ck;color:var(--muted);font-size:13px}
 .ws-day.off .t{opacity:.45}
 @media (max-width:480px){.ws-day{grid-template-columns:1fr auto;grid-template-areas:"d ck" "t t"}}
-.ws-svc{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+.ws-svc{display:grid;grid-template-columns:minmax(0,1fr) 110px 110px;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
 .ws-svc:first-child{border-top:0;padding-top:0}
+@media (max-width:520px){.ws-svc{grid-template-columns:minmax(0,1fr) 78px 70px}}
+.ws-svc-head{border-top:0;padding:0 0 2px;font:600 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ws-svc-head+div .ws-svc:first-child{padding-top:4px}
 .ws-svc .wide{grid-column:1/-1}
 .ws-svc .tools{grid-column:1/-1;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .ws-svc label.ck{color:var(--muted);font-size:13px;margin-right:auto}
@@ -1460,6 +1463,7 @@ function vWebsite(){
   const svcs=d.services.map((s,i)=>`<div class="ws-svc">
      ${inp(`services.${i}.name`,"Service name",'aria-label="Service name"')}
      ${inp(`services.${i}.price`,"Price",'inputmode="decimal" aria-label="Price"')}
+     ${inp(`services.${i}.hours`,"Hours",'inputmode="decimal" aria-label="Typical hours" title="Typical shop time. Online bookings for this service hold this much bay time."')}
      <div class="wide">${inp(`services.${i}.desc`,"Short description (optional)",'aria-label="Description"')}</div>
      <div class="tools">${ck(`services.${i}.from`,'Show as "from"')}
        ${ro?"":`<button class="btn small" type="button" data-svc-up="${i}" aria-label="Move up" ${i===0?"disabled":""}>↑</button>
@@ -1513,7 +1517,8 @@ function vWebsite(){
        ${ro?"":`<span class="btn small filebtn">${d.aboutPhoto?"Change photo":"Add a photo of you"}<input type="file" accept="image/*" id="wsAboutPhoto"></span>
        ${d.aboutPhoto?`<button class="btn small danger" type="button" id="wsAboutRm">Remove</button>`:""}`}</div></section>
    <section class="panel"><h2>Services &amp; prices</h2>
-     <p class="ws-help">Leave the price empty to show “Call for a quote”. Tick “from” for jobs that vary by vehicle.</p>
+     <p class="ws-help">Leave the price empty to show “Call for a quote”. Tick “from” for jobs that vary by vehicle. <b>Shop hours</b> is how long the job typically takes: when a customer books that service online, that much bay time is held, and the job starts with it as the estimate. Customers don't see it.</p>
+     ${svcs?`<div class="ws-svc ws-svc-head" aria-hidden="true"><span>Service</span><span>Price</span><span>Shop hours</span></div>`:""}
      <div>${svcs||`<div class="empty" style="padding:8px">No services yet.</div>`}</div>
      ${ro?"":`<button class="btn small" type="button" id="wsSvcAdd" style="align-self:flex-start">+ Add a service</button>`}
      <label class="f">Note under the prices${inp("priceNote","Prices before HST.")}</label></section>
@@ -1589,7 +1594,7 @@ function bindWebsite(v){
   v.querySelectorAll("[data-pic]").forEach(el=>el.onchange=async()=>{const f=el.files[0];if(!f)return;toast("Uploading photo…");
     try{setPath(d,el.dataset.pic,await uploadPhoto(f));render()}catch(e){toast(e.message||"Couldn't upload that photo")}});
   v.querySelectorAll("[data-pic-rm]").forEach(b=>b.onclick=()=>{setPath(d,b.dataset.picRm,"");render()});
-  const add=$("#wsSvcAdd");if(add)add.onclick=()=>{d.services.push({name:"",price:"",from:false,desc:""});render();const n=v.querySelectorAll('[data-sf$=".name"]');n[n.length-1]?.focus()};
+  const add=$("#wsSvcAdd");if(add)add.onclick=()=>{d.services.push({name:"",price:"",from:false,desc:"",hours:""});render();const n=v.querySelectorAll('[data-sf$=".name"]');n[n.length-1]?.focus()};
   const ph=$("#wsPhotos");if(ph)ph.onchange=async()=>{const files=[...ph.files];if(!files.length)return;toast(`Uploading ${files.length} photo${files.length>1?"s":""}…`);
     for(const f of files){try{d.photos.push({url:await uploadPhoto(f),caption:""})}catch(e){toast(e.message||"Couldn't upload that photo")}}render()};
   const ap=$("#wsAboutPhoto");if(ap)ap.onchange=async()=>{const f=ap.files[0];if(!f)return;toast("Uploading photo…");try{d.aboutPhoto=await uploadPhoto(f);render()}catch(e){toast(e.message||"Couldn't upload that photo")}};
@@ -1767,7 +1772,7 @@ async function acceptRequest(book){
     const picked=(base.vehicles||[]).find(x=>words.some(w=>vehLabel(x).toLowerCase().includes(w)))||(base.vehicles||[])[0];
     openJob(null,{customerId:cid,vehicle:onFile?vehLabel(onFile):hasVeh?reqVeh(r):picked?vehLabel(picked):(r.vehicleNote||""),concern:r.concern||"",date:r.prefDate||today(),
       time:/^\d{2}:\d{2}$/.test(r.prefTime||"")?r.prefTime:r.prefTime==="afternoon"?"13:00":"09:00",status:r.kind==="checkin"?"inshop":"booked",fromRequest:r.id,contactBy:r.contactBy||"call",
-      odometer:r.odometer?Number(r.odometer).toLocaleString("en-US")+(r.odoUnit==="mi"?" mi":" km"):"",notes:r.visit?VISIT[r.visit]||"":""});
+      odometer:r.odometer?Number(r.odometer).toLocaleString("en-US")+(r.odoUnit==="mi"?" mi":" km"):"",estHours:r.estHours||"",notes:r.visit?VISIT[r.visit]||"":""});
   }else closeSheet();
 }
 

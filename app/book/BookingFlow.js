@@ -19,9 +19,9 @@ export default function BookingFlow({ children, services, shopName, phone, tel, 
   const [time, setTime] = useState("");
   const [step, setStep] = useState("pick");   // pick | details
 
-  async function load(keepDate) {
+  async function load(keepDate, svc = service) {
     try {
-      const r = await fetch(`${base}/api/availability`, { cache: "no-store" });
+      const r = await fetch(`${base}/api/availability${svc ? `?service=${encodeURIComponent(svc)}` : ""}`, { cache: "no-store" });
       const a = await r.json();
       setAvail(a);
       const first = a.days.find((d) => d.free > 0);
@@ -48,7 +48,7 @@ export default function BookingFlow({ children, services, shopName, phone, tel, 
       ) : (
         <>
           <label className="bk-fld"><span>What does it need?</span>
-            <select id="bk-service" value={service} onChange={(e) => setService(e.target.value)}>
+            <select id="bk-service" value={service} onChange={(e) => { setService(e.target.value); setTime(""); load(date, e.target.value); }}>
               <option value="">Choose a service (optional)</option>
               {services.map((s) => <option key={s} value={s}>{s}</option>)}
               <option value="Something else">Something else</option>

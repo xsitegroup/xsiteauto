@@ -4,7 +4,7 @@ import { inShop } from "@/lib/db";
 import { loadPublic } from "@/lib/public";
 import { takesBookings } from "@/lib/shop";
 import { tidyPostal } from "@/lib/locale";
-import { getAvailability } from "@/lib/availability";
+import { getAvailability, serviceHours } from "@/lib/availability";
 import { notifyNewRequest } from "@/lib/notify";
 
 // Public endpoint: a customer sends their details from a shop's booking page.
@@ -70,7 +70,7 @@ export async function POST(req) {
   if (slotTime && b.kind !== "checkin") {
     if (!prefDate) return bad("Please pick a day for your drop-off.");
     try {
-      const a = await inShop(p.shop.id, (q) => getAvailability(q, p, 14));
+      const a = await inShop(p.shop.id, (q) => getAvailability(q, p, 14, { service }));
       const day = a.days.find((d) => d.date === prefDate);
       const slot = day && day.slots.find((x) => x.time === slotTime);
       if (!slot || !slot.free) return bad("Sorry, that time was just taken. Please pick another time.", 409);
@@ -98,6 +98,7 @@ export async function POST(req) {
     visit: b.kind === "checkin" && ["wait", "drop", "ride"].includes(b.visit) ? b.visit : "",
     concern: service && service !== "Something else" && !concern.toLowerCase().startsWith(service.toLowerCase()) ? `${service}: ${concern}` : concern,
     service,
+    estHours: serviceHours(p.site, service) ? String(serviceHours(p.site, service)) : "",
     returning: !!b.returning,
     vehicleNote: str(b.vehicleNote, 80),
     prefDate,
