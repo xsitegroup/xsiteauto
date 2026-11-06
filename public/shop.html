@@ -909,11 +909,11 @@ function bookingElsewhere(){
       <p class="ws-help">Customers point their phone camera at it and your booking page opens. Use the booking code on business cards, invoices and your window, and the check-in code at the counter for walk-ins.</p>
       <div class="grid2 qrgrid">
         <div><h3 style="margin:6px 0">Book a time</h3><img src="/api/booking/qr?for=book&format=svg" alt="QR code for your booking page" style="width:160px;height:160px;display:block;border:1px solid var(--line);border-radius:8px;background:#fff">
-          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=book&format=sign" target="_blank" rel="noopener">Print a sign</a><a class="btn small" href="/api/booking/qr?for=book&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=book&format=svg">SVG for printers</a></div></div>
+          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=book&format=sign&size=5x7" target="_blank" rel="noopener">Print 5 × 7</a><a class="btn small" href="/api/booking/qr?for=book&format=sign" target="_blank" rel="noopener">Print full page</a><a class="btn small" href="/api/booking/qr?for=book&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=book&format=svg">SVG for printers</a></div></div>
         <div><h3 style="margin:6px 0">Walk-in check-in</h3><img src="/api/booking/qr?for=checkin&format=svg" alt="QR code for walk-in check-in" style="width:160px;height:160px;display:block;border:1px solid var(--line);border-radius:8px;background:#fff">
-          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=checkin&format=sign" target="_blank" rel="noopener">Print a sign</a><a class="btn small" href="/api/booking/qr?for=checkin&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=checkin&format=svg">SVG for printers</a></div></div>
+          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=checkin&format=sign&size=5x7" target="_blank" rel="noopener">Print 5 × 7</a><a class="btn small" href="/api/booking/qr?for=checkin&format=sign" target="_blank" rel="noopener">Print full page</a><a class="btn small" href="/api/booking/qr?for=checkin&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=checkin&format=svg">SVG for printers</a></div></div>
       </div>
-      <p class="ws-help">The image works in Word and on most business-card sites. Give the SVG to a print shop for large signs.</p>
+      <p class="ws-help">5 × 7 fits a standard photo frame on the counter. The image works in Word and on most business-card sites. Give the SVG to a print shop for large signs.</p>
       <div class="row">${doneBtn("qr","I've put up a QR code")}</div></section>`;
   return `
     <section class="panel"><h2>Google Business Profile</h2>
