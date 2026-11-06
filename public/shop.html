@@ -146,6 +146,7 @@ label.f,div.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-wei
 label.f input,label.f select,label.f textarea{text-transform:none;letter-spacing:0;font-weight:400;font-size:15px}
 div.f .ws-pic{text-transform:none;letter-spacing:0}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.qrgrid{grid-template-columns:1fr}}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 @media (max-width:560px){.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -773,7 +774,7 @@ function setupSteps(){
   return[
     {k:"account",t:"Create your shop account",d:"",done:true},
     {k:"basics",t:"Check your labour rate and sales tax",d:"So repair orders add up right from the first job.",done:!!st.taxConfirmed&&String(st.labourRate??"")!=="",btn:"Check them"},
-    {k:"booking",t:"Add online booking to your website",d:"Copy one line into your site so customers can book any time.",done:!!sh.embedSeenAt||!!st.bookingDone,btn:"Set it up"},
+    {k:"booking",t:"Turn on online booking",d:"Put it on your website, your Google listing or Facebook so customers can book any time.",done:!!sh.embedSeenAt||!!st.bookingDone,btn:"Set it up"},
     {k:"import",t:"Import your customers from QuickBooks",d:"Upload your QuickBooks customer list. Takes about two minutes.",done:(S.imports||[]).some(i=>!i.undone)||custs.length>=10||!!st.importSkipped,btn:"Import"},
     {k:"team",t:"Add your technicians and invite your team",d:"Each tech gets a column on the day schedule.",done:techs().length>0||!!st.teamDone,btn:"Add techs"},
     {k:"job",t:"Book your first job",d:"Put tomorrow's first car on the board and see how it flows.",done:real.length>0,btn:"Book a job"}];
@@ -868,12 +869,13 @@ function vBooking(){
   const [bname,bsteps]=BUILDERS[ui.bkBuilder];
   const code=ui.bkTab==="button"?buttonCode():snippet();
   return `<a href="#setup" class="muted" style="text-decoration:none;font-weight:600">‹ Setup checklist</a>
-  <div class="row"><h1>Booking on your website</h1></div>
-  <p class="muted" style="margin:-10px 0 0">Bookings land at the top of your Today screen. Nothing changes a customer record until you accept it.</p>
+  <div class="row"><h1>Online booking</h1></div>
+  <p class="muted" style="margin:-10px 0 0">Use any or all of these. Bookings land at the top of your Today screen, and nothing changes a customer record until you accept it.</p>
   ${seen?`<div class="status ok">✓ Your booking form is on your website${sh.embedSeenUrl?`: <a href="${esc(sh.embedSeenUrl)}" target="_blank" rel="noopener">${esc(sh.embedSeenUrl.replace(/^https?:\/\//,""))}</a>`:""}.</div>`:""}
+  ${(S.settings.bookingVia||[]).length?`<div class="status ok">✓ Booking link added to: ${(S.settings.bookingVia||[]).map(k=>({google:"Google",facebook:"Facebook",instagram:"Instagram",qr:"QR code",link:"shared link"})[k]||k).join(", ")}</div>`:""}
   <div class="cols"><section class="main">
-    <div class="seg" role="group" aria-label="How to add it">${[["form","Booking form on your site"],["button","Just a “Book online” button"],["send","Send to my web person"]].map(([k,l])=>`<button type="button" data-bktab="${k}" aria-pressed="${ui.bkTab===k}">${l}</button>`).join("")}</div>
-    ${ui.bkTab==="send"?`<section class="panel"><h2>Send the code to whoever looks after your website</h2>
+    <div class="seg" role="group" aria-label="How to add it">${[["form","Form on your website"],["button","“Book online” button"],["link","Google, Facebook & links"],["qr","QR code & signs"],["send","Send to my web person"]].map(([k,l])=>`<button type="button" data-bktab="${k}" aria-pressed="${ui.bkTab===k}">${l}</button>`).join("")}</div>
+    ${ui.bkTab==="link"||ui.bkTab==="qr"?bookingElsewhere():ui.bkTab==="send"?`<section class="panel"><h2>Send the code to whoever looks after your website</h2>
       <label class="f">Their email<input id="bk_to" type="email" inputmode="email" placeholder="webperson@example.com"></label>
       <div class="row"><a class="btn primary" id="bk_send" href="#">Write the email</a><button class="btn" type="button" data-copy="${esc(snippet())}">Copy code</button></div>
       <p class="ws-help">Opens your email app with the code and instructions filled in.</p></section>`:`
@@ -883,18 +885,57 @@ function vBooking(){
     <section class="panel"><h2>2. Paste it into your website</h2>
       <div class="chips">${Object.entries(BUILDERS).map(([k,[n]])=>`<button class="chip" type="button" data-bld="${k}" aria-pressed="${ui.bkBuilder===k}">${n}</button>`).join("")}</div>
       <ol class="howto">${bsteps.map(s=>`<li>${s}</li>`).join("")}</ol></section>`}
-    <section class="panel"><h2>3. Check it's working</h2>
+    ${ui.bkTab==="link"||ui.bkTab==="qr"?"":`<section class="panel"><h2>3. Check it's working</h2>
       <div class="grid2"><label class="f">Your website<input id="bk_site" value="${esc(sh.websiteUrl||"")}" placeholder="yourshop.com" inputmode="url"></label>
       <div class="f" style="justify-content:flex-end"><button class="btn" type="button" id="bk_check">Check my website</button></div></div>
       <div id="bk_out">${done?"":`<p class="ws-help">We also notice on our own the first time the form loads on your site.</p>`}</div>
       ${done||readOnly?"":`<div class="row"><button class="btn small" type="button" id="bk_done">I've added it</button><button class="btn small" type="button" id="bk_nosite">We don't have a website</button></div>`}
-    </section>
+    </section>`}
   </section><aside class="side">
     <section class="panel"><h2>Your booking address</h2>${copyRow(sh.bookingUrl)}
       ${sh.slugChanged||isStaff()||readOnly?"":`<details><summary class="ws-help" style="cursor:pointer">Change the address (once)</summary><div class="row" style="margin-top:8px"><input id="bk_slug" value="${esc(sh.slug||"")}" aria-label="New booking address" style="flex:1;min-width:0"><button class="btn small" type="button" id="bk_slugsave">Save</button></div><p class="ws-help">Letters, numbers and dashes. Your old address stops working.</p></details>`}</section>
-    <section class="panel"><h2>Preview</h2><p class="ws-help">How the form looks inside your website.</p>
-      <iframe class="preview-frame" title="Booking form preview" src="${esc((sh.bookingUrl||"")+"?embed=1")}" loading="lazy"></iframe></section>
+    ${ui.bkTab==="link"||ui.bkTab==="qr"?"":`<section class="panel"><h2>Preview</h2><p class="ws-help">How the form looks inside your website.</p>
+      <iframe class="preview-frame" title="Booking form preview" src="${esc((sh.bookingUrl||"")+"?embed=1")}" loading="lazy"></iframe></section>`}
   </aside></div>`;
+}
+
+// Booking without a website: Google Business Profile, Facebook, Instagram, plain links, QR codes and signs.
+function bookingElsewhere(){
+  const sh=S.shop||{},url=sh.bookingUrl||"",name=S.settings.shopName||sh.name||"our shop";
+  const msg=`Book your next service with ${name} online: ${url}`;
+  const doneBtn=(k,l)=>readOnly||(S.settings.bookingVia||[]).includes(k)?((S.settings.bookingVia||[]).includes(k)?`<span class="status ok" style="margin:0">✓ Added</span>`:""):`<button class="btn small" type="button" data-bkvia="${k}">${l}</button>`;
+  if(ui.bkTab==="qr")return `
+    <section class="panel"><h2>QR codes</h2>
+      <p class="ws-help">Customers point their phone camera at it and your booking page opens. Use the booking code on business cards, invoices and your window, and the check-in code at the counter for walk-ins.</p>
+      <div class="grid2 qrgrid">
+        <div><h3 style="margin:6px 0">Book a time</h3><img src="/api/booking/qr?for=book&format=svg" alt="QR code for your booking page" style="width:160px;height:160px;display:block;border:1px solid var(--line);border-radius:8px;background:#fff">
+          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=book&format=sign" target="_blank" rel="noopener">Print a sign</a><a class="btn small" href="/api/booking/qr?for=book&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=book&format=svg">SVG for printers</a></div></div>
+        <div><h3 style="margin:6px 0">Walk-in check-in</h3><img src="/api/booking/qr?for=checkin&format=svg" alt="QR code for walk-in check-in" style="width:160px;height:160px;display:block;border:1px solid var(--line);border-radius:8px;background:#fff">
+          <div class="row" style="margin-top:8px"><a class="btn small primary" href="/api/booking/qr?for=checkin&format=sign" target="_blank" rel="noopener">Print a sign</a><a class="btn small" href="/api/booking/qr?for=checkin&format=gif">Download image</a><a class="btn small" href="/api/booking/qr?for=checkin&format=svg">SVG for printers</a></div></div>
+      </div>
+      <p class="ws-help">The image works in Word and on most business-card sites. Give the SVG to a print shop for large signs.</p>
+      <div class="row">${doneBtn("qr","I've put up a QR code")}</div></section>`;
+  return `
+    <section class="panel"><h2>Google Business Profile</h2>
+      <p class="ws-help">Adds a booking link to your listing in Google Search and Maps, where most new customers find you.</p>
+      <ol class="howto"><li>On a computer, sign in to the Google account that manages your shop, then search Google for your shop's name. Your profile tools appear at the top. (Or go to <b>business.google.com</b>.)</li>
+        <li>Click <b>Edit profile</b>, then <b>Contact</b>.</li>
+        <li>Under <b>Appointment links</b> (some shops see <b>Booking</b>), paste your booking address and click <b>Save</b>.</li>
+        <li>Google reviews the change, usually within a few days. After that, a booking link shows on your listing.</li></ol>
+      ${copyRow(url)}<div class="row">${doneBtn("google","I've added it to Google")}</div></section>
+    <section class="panel"><h2>Facebook page</h2>
+      <ol class="howto"><li>Open your shop's Facebook page and switch to it if Facebook asks.</li>
+        <li>Click <b>Add action button</b> (or <b>Edit action button</b> if you have one) under the cover photo.</li>
+        <li>Choose <b>Book now</b>, then <b>Link to website</b>, paste your booking address and click <b>Save</b>.</li></ol>
+      <div class="row">${doneBtn("facebook","I've added it to Facebook")}</div></section>
+    <section class="panel"><h2>Instagram</h2>
+      <ol class="howto"><li>In the Instagram app, go to your profile and tap <b>Edit profile</b>.</li>
+        <li>Tap <b>Links</b>, then <b>Add external link</b>. Paste your booking address, title it <b>Book online</b>, and tap <b>Done</b>.</li></ol>
+      <div class="row">${doneBtn("instagram","I've added it to Instagram")}</div></section>
+    <section class="panel"><h2>Anywhere else</h2>
+      <p class="ws-help">Your booking address works on its own: in your email signature, in texts to customers, on Kijiji, Yelp or a directory listing, and on invoices.</p>
+      <label class="f">A message you can text or email to customers<textarea rows="2" readonly>${esc(msg)}</textarea></label>
+      <div class="row"><button class="btn small" type="button" data-copy="${esc(msg)}">Copy message</button><button class="btn small" type="button" data-copy="${esc(url)}">Copy link only</button>${doneBtn("link","I'm sharing the link")}</div></section>`;
 }
 
 async function checkSite(){
@@ -1022,8 +1063,9 @@ function bindTrial(v){
   v.querySelectorAll("[data-bktab]").forEach(b=>b.onclick=()=>{ui.bkTab=b.dataset.bktab;render()});
   v.querySelectorAll("[data-bld]").forEach(b=>b.onclick=()=>{ui.bkBuilder=b.dataset.bld;render()});
   const bc=$("#bk_check");if(bc)bc.onclick=checkSite;
+  v.querySelectorAll("[data-bkvia]").forEach(b=>b.onclick=()=>{const via=[...new Set([...(S.settings.bookingVia||[]),b.dataset.bkvia])];markSetting({bookingDone:true,bookingVia:via},"Nice. Online booking is on.")});
   const bd=$("#bk_done");if(bd)bd.onclick=()=>markSetting({bookingDone:true},"Marked as done");
-  const bn=$("#bk_nosite");if(bn)bn.onclick=()=>markSetting({bookingDone:true,noWebsite:true},"OK. Share your booking address instead.");
+  const bn=$("#bk_nosite");if(bn)bn.onclick=()=>{ui.bkTab="link";markSetting({bookingDone:true,noWebsite:true},"No problem. Put it on Google and Facebook instead.")};
   const bs=$("#bk_send");if(bs)bs.onclick=e=>{e.preventDefault();const to=$("#bk_to").value.trim(),sh=S.shop||{};
     const body=`Hi,\n\nCould you add our online booking form to our website? Paste this code where the form should appear (our Contact page is a good spot):\n\n${snippet()}\n\nOn WordPress: add a Custom HTML block and paste it. On Wix: Add > Embed Code > Embed HTML. On GoDaddy: Add Section > HTML. On Squarespace: a Code block.\n\nIf code isn't possible, a "Book online" button linking to ${sh.bookingUrl} works too.\n\nThanks,\n${S.me?.name||""}`;
     location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent("Online booking form for our website")}&body=${encodeURIComponent(body)}`};
@@ -1427,7 +1469,7 @@ function vWebsite(){
      <button class="btn small" type="button" data-ph-right="${i}" aria-label="Move later" ${i===d.photos.length-1?"disabled":""}>→</button>
      <button class="btn small danger" type="button" data-ph-rm="${i}">Remove</button></div>`}</div>`).join("");
   const live=!!(S.site&&S.site.published);
-  return `<div class="row"><h1>Website</h1><div class="spacer"></div><a class="btn small" href="#booking">Booking on your website</a>${S.siteHost?`<a class="btn small" href="/preview" target="_blank" rel="noopener">Preview</a>`:`<a class="btn small" href="${esc(S.shop?.bookingUrl||"#")}" target="_blank" rel="noopener">Open booking page</a>`}</div>
+  return `<div class="row"><h1>Website</h1><div class="spacer"></div><a class="btn small" href="#booking">Online booking</a>${S.siteHost?`<a class="btn small" href="/preview" target="_blank" rel="noopener">Preview</a>`:`<a class="btn small" href="${esc(S.shop?.bookingUrl||"#")}" target="_blank" rel="noopener">Open booking page</a>`}</div>
    <section class="panel">
      <div class="ws-status"><span class="ws-dot ${live?"live":""}"></span><b>${S.siteHost?(live?`Your website is live at ${esc(S.siteHost)}`:"Not published yet. Visitors see a “coming soon” page."):`Your booking page uses these details: <a href="${esc(S.shop?.bookingUrl||"#")}" target="_blank" rel="noopener">${esc((S.shop?.bookingUrl||"").replace(/^https:\/\//,""))}</a>`}</b></div>
      ${miss.length?`<p class="ws-warn"><b>Before you publish, fill in:</b>${miss.map(m=>`<span>· ${esc(m)}</span>`).join("")}</p>`:""}
