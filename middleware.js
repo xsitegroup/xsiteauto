@@ -21,7 +21,7 @@ function hostKind(req) {
 
 const SHARED = ["/photos/", "/icons/", "/favicon.ico", "/embed.js"];
 const PUBLIC_API = ["/api/requests", "/api/requests/check", "/api/availability", "/api/embed/seen"];
-const APP_OPEN = ["/login", "/signup", "/reset", "/invite", "/manifest.webmanifest", "/sw.js", "/book",
+const APP_OPEN = ["/ga.js", "/login", "/signup", "/reset", "/invite", "/manifest.webmanifest", "/sw.js", "/book",
   "/api/auth/login", "/api/auth/forgot", "/api/auth/reset", "/api/signup/start", "/api/signup/verify",
   "/api/team/accept", "/api/billing/webhook", "/api/cron/daily", "/api/public/shop", ...PUBLIC_API];
 const starts = (path, list) => list.some((p) => (p.endsWith("/") ? path.startsWith(p) : path === p));

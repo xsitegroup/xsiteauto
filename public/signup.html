@@ -51,6 +51,7 @@ input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--bad)}
 .trap{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
 [hidden]{display:none!important}
 </style>
+<script src="/ga.js"></script>
 </head><body>
 <header>
   <a class="logo" href="https://xsiteauto.com"><svg width="30" height="34" viewBox="1388 976 2767 3116" aria-hidden="true"><path fill="#5B9DC7" d="M 1540,2399 L 2231,3464 C 2358,3660 2621,3716 2818,3589 L 3883,2898 C 4079,2772 4135,2508 4008,2312 L 3317,1246 C 3190,1052 2927,996 2731,1121 L 1665,1812 C 1471,1939 1415,2202 1540,2399 Z"/><path fill="#307DB1" d="M 4004,2776 L 3292,3828 C 3162,4021 2897,4072 2703,3942 L 1651,3230 C 1459,3100 1408,2835 1538,2641 L 2249,1589 C 2379,1397 2644,1346 2838,1476 L 3890,2187 C 4083,2317 4134,2582 4004,2776 Z"/><path fill="#FFFFFF" d="M 3457,1893 L 3298,2164 C 3271,2208 3241,2272 3241,2272 L 3234,2272 C 3234,2272 3204,2208 3177,2164 L 2735,1425 C 2593,1379 2436,1409 2323,1507 L 2979,2543 2270,3647 2593,3866 3187,2913 C 3211,2876 3234,2822 3234,2822 L 3241,2822 C 3241,2822 3264,2876 3288,2913 L 3583,3399 3819,3050 3496,2543 3769,2104 3457,1893 Z"/></svg><b>XSite Auto</b></a>
@@ -138,8 +139,9 @@ f.addEventListener("submit",async e=>{
     const r=await fetch("/api/signup/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
     const d=await r.json().catch(()=>({}));
     if(r.ok){signupId=d.id;document.getElementById("sentTo").textContent=d.email;f.hidden=true;cf.hidden=false;cf.code.focus();
+      window.xsTrack&&xsTrack("signup_code_sent",{country});
       if(d.devCode){cf.code.value=d.devCode;cerr.textContent="Test mode: code filled in for you."}window.scrollTo({top:0,behavior:"smooth"});}
-    else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
+    else{window.xsTrack&&xsTrack("signup_error",{field:d.field||"",country});err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
   }catch(x){err.textContent="Can't reach XSite Auto. Check your connection and try again."}
   go.disabled=false;go.textContent="Start my free trial";
   if(window.turnstile&&document.querySelector("#ts iframe")){try{turnstile.reset("#ts");tsToken=""}catch(x){}}
@@ -150,7 +152,7 @@ cf.addEventListener("submit",async e=>{
   try{
     const r=await fetch("/api/signup/verify",{method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",body:JSON.stringify({id:signupId,code:cf.code.value})});
     const d=await r.json().catch(()=>({}));
-    if(r.ok){location.href="/#setup";return}
+    if(r.ok){window.xsTrack&&xsTrack("sign_up",{method:"trial",country});setTimeout(()=>{location.href="/#setup"},300);return}
     cerr.textContent=d.error||"That didn't work. Please try again.";
   }catch(x){cerr.textContent="Can't reach XSite Auto. Check your connection and try again."}
   go.disabled=false;go.textContent="Create my shop";
