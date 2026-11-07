@@ -28,7 +28,8 @@ this app is `xsiteauto-app`.
 4. The nightly job (`/api/cron/daily`, 6 am Eastern) sends trial emails on days 1, 3, 7 and 11, makes ended
    trials read-only (the booking page then asks customers to call), sends a final notice 26 days later and
    closes the shop at 30 days. XSite gets a daily summary.
-5. Keep XSite Auto opens Stripe Checkout for $99 USD a month, plus optional Done-for-you setup ($495 USD one time) if the
+5. Keep XSite Auto opens Stripe Checkout for $99 USD a month ($139 CAD for Canadian shops, so it lands in the CAD
+   balance and bank account), plus optional Done-for-you setup ($495 USD / $695 CAD one time) if the
    owner ticks it. Active shops can add Done-for-you setup later from Billing. Stripe's webhook keeps the
    shop's status in step with payments.
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { signedIn } from "@/lib/guard";
-import { stripe, stripeReady, MONTHLY_CENTS, SETUP_CENTS } from "@/lib/stripe";
+import { stripe, stripeReady, PRICES, currencyFor } from "@/lib/stripe";
 import { forgetShop, shopAppUrl } from "@/lib/shop";
 
 // "Keep XSite Auto": opens Stripe Checkout for $99/month, plus the optional $495 Done-for-you setup
@@ -26,10 +26,12 @@ export async function POST(req) {
       forgetShop();
     }
     const base = await shopAppUrl(shop);
-    const monthly = process.env.STRIPE_PRICE_MONTHLY ? { price: process.env.STRIPE_PRICE_MONTHLY, quantity: 1 }
-      : { price_data: { currency: "usd", unit_amount: MONTHLY_CENTS, recurring: { interval: "month" }, product_data: { name: "XSite Auto monthly" } }, quantity: 1 };
-    const setup = process.env.STRIPE_PRICE_SETUP ? { price: process.env.STRIPE_PRICE_SETUP, quantity: 1 }
-      : { price_data: { currency: "usd", unit_amount: SETUP_CENTS, product_data: { name: "XSite Auto Done-for-you setup", description: "QuickBooks import, booking on your website and Google, rates and technicians, team training and a first-week check-in" } }, quantity: 1 };
+    const cur = currencyFor(shop), C = cur.toUpperCase();
+    const monthlyPrice = process.env[`STRIPE_PRICE_MONTHLY_${C}`], setupPrice = process.env[`STRIPE_PRICE_SETUP_${C}`];
+    const monthly = monthlyPrice ? { price: monthlyPrice, quantity: 1 }
+      : { price_data: { currency: cur, unit_amount: PRICES[cur].monthly, recurring: { interval: "month" }, product_data: { name: "XSite Auto monthly" } }, quantity: 1 };
+    const setup = setupPrice ? { price: setupPrice, quantity: 1 }
+      : { price_data: { currency: cur, unit_amount: PRICES[cur].setup, product_data: { name: "XSite Auto Done-for-you setup", description: "QuickBooks import, booking on your website and Google, rates and technicians, team training and a first-week check-in" } }, quantity: 1 };
     const tax = process.env.STRIPE_TAX === "on";
     const session = await stripe("checkout/sessions", setupOnly ? {
       mode: "payment", customer, client_reference_id: shop.id,
