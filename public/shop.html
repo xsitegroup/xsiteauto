@@ -342,6 +342,7 @@ ol.howto{margin:0;padding-left:20px;line-height:1.8;font-size:14px}
 .tile[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .tile .lbl{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tile .val{font-family:var(--mono);font-size:24px}
 .price{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.price.dfy{cursor:pointer;align-items:flex-start}.price.dfy .chk{display:flex;gap:10px;align-items:flex-start}.price.dfy input{margin-top:3px;width:18px;height:18px;flex:none}.price.dfy i{font-style:normal;font-size:12px}
 .price small{display:block;color:var(--muted);font-size:13px;font-weight:400}
 .drop{border:2px dashed var(--line);border-radius:12px;padding:22px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;cursor:pointer}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:400;color:var(--ink);text-transform:none;letter-spacing:0}
@@ -1032,30 +1033,41 @@ function vTeam(){
 
 /* ----- billing ----- */
 function vBilling(){
-  const sh=S.shop||{},owner=!isStaff(),paid=/paid=1/.test(location.hash);
-  const active=sh.status==="active";
+  const sh=S.shop||{},owner=!isStaff(),paid=/paid=1/.test(location.hash),setupBought=/setup=1/.test(location.hash);
+  const active=sh.status==="active",canBuy=owner&&sh.billing&&!(active||sh.status==="past_due"||(sh.status==="read_only"&&sh.paid));
+  if(ui.dfy===undefined)ui.dfy=false;
+  const dfy=!sh.setupPaid&&ui.dfy;
   return `<div class="row"><h1>${active?"Your plan":"Keep XSite Auto"}</h1></div>
    ${paid&&!active?`<div class="status ok">Thanks! We're confirming your payment. This page updates in a few seconds.</div>`:""}
    ${active?`<div class="status ok">✓ XSite Auto is active for ${esc(S.settings.shopName||sh.name||"your shop")}.</div>`:""}
+   ${setupBought&&!sh.setupPaid?`<div class="status ok">Thanks! We're confirming your Done-for-you setup. This page updates in a few seconds.</div>`:""}
    <div class="cols"><section class="main">
     ${!active?`<p class="muted" style="margin:0">${sh.status==="trial"?`Your free trial ends ${esc(endDay())}. Everything you've set up carries straight on.`:"Pick up right where you left off. Nothing has been lost."}</p>
      <div class="tiles">${[["Online bookings",Object.values(S.requests||{}).filter(r=>r.kind==="booking").length],["Jobs on the board",jobsArr().filter(j=>!j.example&&!j.opening).length],["Customers on file",Object.values(S.customers).filter(c=>!c.example).length]].map(([l,n])=>`<div class="tile"><div class="val">${n}</div><div class="lbl">${l}</div></div>`).join("")}</div>`:""}
+    ${active?dfyPanel(sh,owner):""}
     ${sh.status==="read_only"&&!sh.paid?`<section class="panel"><h2>If you don't continue</h2><p class="ws-help">Your account stays read-only for 30 days after the trial, so you can sign in and export your customers and jobs. Your booking form asks customers to call you, so your website keeps working.</p></section>`:""}
    </section><aside class="side"><section class="panel plan">
     <h2>${active?"Plan":"Your plan"}</h2>
-    ${sh.setupPaid?"":`<div class="price"><span><b>Setup and training</b><small>One-time. Includes a setup review call, team training and a website check.</small></span><span class="mono">$495</span></div>`}
-    <div class="price"><span><b>XSite Auto monthly</b><small>Everything in your trial. Cancel anytime.</small></span><span class="mono">$99/mo</span></div>
-    ${active?"":`<div class="price" style="border:0"><b>Due today</b><span class="mono" style="font-size:22px">$${sh.setupPaid?"99":"594"}</span></div><p class="ws-help">US dollars. Then $99 each month. Taxes added where they apply.</p>`}
+    <div class="price"><span><b>XSite Auto monthly</b><small>Everything in your trial, plus a free 20-minute welcome call. Cancel anytime.</small></span><span class="mono">$99/mo</span></div>
+    ${sh.setupPaid?`<div class="price"><span><b>Done-for-you setup</b><small>Paid. We'll book your session with you.</small></span><span class="mono">✓</span></div>`:active?"":`<label class="price dfy"><span class="chk"><input type="checkbox" id="bill_dfy" ${dfy?"checked":""} ${canBuy?"":"disabled"}><span><b>Add Done-for-you setup</b> <i class="muted">optional</i><small>One time. ${DFY_TEXT}</small></span></span><span class="mono">$495</span></label>`}
+    ${active?"":`<div class="price" style="border:0"><b>Due today</b><span class="mono" style="font-size:22px">$${dfy?"594":"99"}</span></div><p class="ws-help">US dollars. Then $99 each month. Taxes added where they apply.</p>`}
     ${!owner?`<p class="ws-help">Ask the shop owner to ${active?"manage billing":"keep XSite Auto"}.</p>`:!sh.billing?`<p class="ws-help">To keep XSite Auto, call XSite at <a href="tel:+19053460864">905.346.0864</a> and we'll set you up.</p>`:
       active||sh.status==="past_due"||(sh.status==="read_only"&&sh.paid)?`<button class="btn" type="button" id="bill_portal">${sh.status==="past_due"?"Update card":"Manage billing"}</button>`:`<button class="btn primary" type="button" id="bill_go" style="min-height:48px;font-size:16px">Keep XSite Auto</button>`}
     <p class="ws-help">Questions first? Call <a href="tel:+19053460864">905.346.0864</a>.</p><div id="bill_out"></div>
    </section></aside></div>`;
 }
-async function billing(path){
-  const out=$("#bill_out"),b=$(path==="checkout"?"#bill_go":"#bill_portal");b.disabled=true;
-  const {ok,d}=await post(`/api/billing/${path}`);
+const DFY_TEXT="We import your QuickBooks customers, put booking on your website and Google listing, set up your rates, tax and technicians, train your team for an hour, and check in after your first week.";
+function dfyPanel(sh,owner){
+  if(sh.setupPaid)return `<section class="panel"><h2>Done-for-you setup</h2><p class="ws-help">Paid. We'll contact you to book your setup session, or call <a href="tel:+19053460864">905.346.0864</a>.</p></section>`;
+  return `<section class="panel"><h2>Want us to do the setup?</h2><p class="ws-help"><b>Done-for-you setup</b>, $495 USD one time. ${DFY_TEXT}</p>
+    ${owner&&sh.billing?`<div class="row"><button class="btn" type="button" id="bill_dfybuy">Add Done-for-you setup</button></div>`:`<p class="ws-help">${owner?"Call 905.346.0864 to add it.":"Ask the shop owner to add it."}</p>`}
+    <p class="ws-help">Every shop also gets a free 20-minute welcome call. <a href="tel:+19053460864">905.346.0864</a></p></section>`;
+}
+async function billing(path,body){
+  const out=$("#bill_out"),b=$(path==="checkout"?(body&&body.setupOnly?"#bill_dfybuy":"#bill_go"):"#bill_portal");if(b)b.disabled=true;
+  const {ok,d}=await post(`/api/billing/${path}`,body);
   if(ok&&d.url){location.href=d.url;return}
-  b.disabled=false;out.innerHTML=`<p class="banner">${esc(d.error||"That didn't work. Try again in a minute.")}</p>`;
+  if(b)b.disabled=false;if(out)out.innerHTML=`<p class="banner">${esc(d.error||"That didn't work. Try again in a minute.")}</p>`;else toast(d.error||"That didn't work. Try again in a minute.");
 }
 
 function bindTrial(v){
@@ -1093,13 +1105,15 @@ function bindTrial(v){
     if(r.ok){toast("Removed");ui.team=null;render()}else toast("Couldn't remove them")});
   const st=$("#saveTechs");if(st)st.onclick=async()=>{const tl=(ui.techDraft||S.settings.techs||[]).map(t=>({id:t.id,name:String(t.name||"").replace(/\s+/g," ").trim()})).filter(t=>t.name);
     const doc={...S.settings,techs:tl};if(await write(()=>db.doc("settings/shop").set(doc),"Technicians saved")){S.settings=doc;ui.techDraft=null;render()}};
-  const bg=$("#bill_go");if(bg)bg.onclick=()=>billing("checkout");
+  const bg=$("#bill_go");if(bg)bg.onclick=()=>billing("checkout",{setup:!!ui.dfy});
+  const bf=$("#bill_dfy");if(bf)bf.onchange=()=>{ui.dfy=bf.checked;render()};
+  const bb=$("#bill_dfybuy");if(bb)bb.onclick=()=>billing("checkout",{setupOnly:true});
   const bp=$("#bill_portal");if(bp)bp.onclick=()=>billing("portal");
 }
 // Two-tap confirm on the button itself (no browser pop-ups).
 function confirmInline(b,label){if(b.dataset.armed){return true}b.dataset.armed="1";const t=b.textContent;b.textContent=label;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=t}},3000);return false}
 // After paying, keep checking until Stripe has told us.
-setInterval(()=>{if(route==="billing"&&/paid=1/.test(location.hash)&&S.shop&&S.shop.status!=="active"&&db&&db.refresh)db.refresh().catch(()=>{})},4000);
+setInterval(()=>{if(route==="billing"&&S.shop&&db&&db.refresh&&((/paid=1/.test(location.hash)&&S.shop.status!=="active")||(/setup=1/.test(location.hash)&&!S.shop.setupPaid)))db.refresh().catch(()=>{})},4000);
 
 /* ---------- view bindings ---------- */
 function bindView(){

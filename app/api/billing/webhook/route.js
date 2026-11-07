@@ -14,6 +14,7 @@ async function shopFor(obj) {
   const { rows } = await query("select id from shops where stripe_customer_id = $1", [cust]);
   return rows[0] ? shopById(rows[0].id) : null;
 }
+const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const set = async (id, sql, params = []) => { await query(`update shops set ${sql} where id = $1`, [id, ...params]); forgetShop(); };
 
 export async function POST(req) {
@@ -27,18 +28,41 @@ export async function POST(req) {
   switch (ev.type) {
     case "checkout.session.completed": {
       if (o.payment_status && o.payment_status !== "paid" && o.payment_status !== "no_payment_required") break;
-      const first = !shop.converted_at;
-      await set(shop.id, `status = 'active', stripe_customer_id = coalesce($2, stripe_customer_id), stripe_subscription_id = coalesce($3, stripe_subscription_id),
-        converted_at = coalesce(converted_at, now()), setup_paid_at = coalesce(setup_paid_at, now()), past_due_since = null, read_only_since = null`, [o.customer || null, o.subscription || null]);
-      if (first) {
-        const { rows } = await query("select email, name from users where shop_id = $1 and role = 'owner' order by id limit 1", [shop.id]);
+      const owner = (await query("select email, name from users where shop_id = $1 and role = 'owner' order by id limit 1", [shop.id])).rows[0];
+      const money = `$${((o.amount_total || 0) / 100).toFixed(2)} ${String(o.currency || "usd").toUpperCase()}`;
+      const call = process.env.SETUP_CALL_URL ? [["Book a time", process.env.SETUP_CALL_URL]] : [];
+
+      // Done-for-you setup bought on its own, after the shop was already paying.
+      if (o.mode === "payment" && o.metadata?.kind === "setup") {
+        if (shop.setup_paid_at) break;
+        await set(shop.id, "setup_paid_at = now()");
         await Promise.allSettled([
-          notifyXSite("trial_converted", { subject: `XSite Auto sale: ${shop.name}`, heading: "Trial converted", intro: `${shop.name} kept XSite Auto. Book their setup review call.`,
-            rows: [["Shop", shop.name], ["Owner", `${rows[0]?.name || ""} ${rows[0]?.email || ""}`], ["Phone", shop.phone || ""], ["Amount", `$${((o.amount_total || 0) / 100).toFixed(2)} ${String(o.currency || "usd").toUpperCase()}`]],
+          notifyXSite("setup_purchased", { subject: `XSite Auto Done-for-you setup: ${shop.name}`, heading: "Done-for-you setup bought", intro: `${shop.name} bought Done-for-you setup. Book their session.`,
+            rows: [["Shop", shop.name], ["Owner", `${owner?.name || ""} ${owner?.email || ""}`], ["Phone", shop.phone || ""], ["Amount", money]],
             data: { shop: { id: shop.id, slug: shop.slug, name: shop.name }, amountTotal: o.amount_total, currency: o.currency } }),
-          rows[0] && sendSystem({ to: rows[0].email, subject: "You're all set with XSite Auto",
-            heading: "Thanks for keeping XSite Auto", intro: `Everything you set up during the trial carries straight on. We'll be in touch to book ${shop.name}'s setup review and team training.`,
-            buttons: process.env.SETUP_CALL_URL ? [["Book the setup call", process.env.SETUP_CALL_URL]] : [], footer: "Questions? Call 905.346.0864." }),
+          owner && sendSystem({ to: owner.email, subject: "Your Done-for-you setup",
+            heading: "Thanks, we'll take it from here", intro: `We'll be in touch within one business day to book ${esc(shop.name)}'s setup session: your QuickBooks import, booking on your website and Google, your rates and technicians, and training for your team.`,
+            buttons: call, footer: "Questions? Call 905.346.0864." }),
+        ]);
+        break;
+      }
+
+      const first = !shop.converted_at;
+      const withSetup = o.metadata?.setup === "1";
+      await set(shop.id, `status = 'active', stripe_customer_id = coalesce($2, stripe_customer_id), stripe_subscription_id = coalesce($3, stripe_subscription_id),
+        converted_at = coalesce(converted_at, now()), ${withSetup ? "setup_paid_at = coalesce(setup_paid_at, now())," : ""} past_due_since = null, read_only_since = null`, [o.customer || null, o.subscription || null]);
+      if (first) {
+        await Promise.allSettled([
+          notifyXSite("trial_converted", { subject: `XSite Auto sale: ${shop.name}${withSetup ? " (with Done-for-you setup)" : ""}`, heading: "Trial converted",
+            intro: withSetup ? `${shop.name} kept XSite Auto and bought Done-for-you setup. Book their setup session.` : `${shop.name} kept XSite Auto. Book their free welcome call.`,
+            rows: [["Shop", shop.name], ["Owner", `${owner?.name || ""} ${owner?.email || ""}`], ["Phone", shop.phone || ""], ["Done-for-you setup", withSetup ? "Yes" : "No"], ["Amount", money]],
+            data: { shop: { id: shop.id, slug: shop.slug, name: shop.name }, amountTotal: o.amount_total, currency: o.currency, setup: withSetup } }),
+          owner && sendSystem({ to: owner.email, subject: "You're all set with XSite Auto",
+            heading: "Thanks for keeping XSite Auto",
+            intro: withSetup
+              ? `Everything you set up during the trial carries straight on. We'll be in touch within one business day to book ${esc(shop.name)}'s Done-for-you setup session.`
+              : `Everything you set up during the trial carries straight on. Every new shop gets a free 20-minute welcome call: we'll check your setup and answer any questions. We'll reach out to book it, or pick a time yourself.`,
+            buttons: call, footer: "Questions? Call 905.346.0864." }),
         ]);
       }
       break;
