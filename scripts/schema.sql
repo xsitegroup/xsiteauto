@@ -141,3 +141,27 @@ create table if not exists imports (
   created_at timestamptz not null default now(),
   primary key (shop_id, id)
 );
+
+-- Text appointment reminders: one per job per appointment date, with the customer's reply.
+create table if not exists reminders (
+  shop_id uuid not null default app_shop() references shops on delete cascade,
+  job_id text not null,
+  appt_date date not null,
+  phone text not null,
+  status text not null default 'sent' check (status in ('sent', 'confirmed', 'declined', 'replied', 'failed', 'optout')),
+  body text,
+  sid text,
+  error text,
+  reply text,
+  sent_at timestamptz not null default now(),
+  replied_at timestamptz,
+  test boolean not null default false,
+  primary key (shop_id, job_id, appt_date)
+);
+create index if not exists reminders_phone on reminders (phone, sent_at desc);
+
+-- Phone numbers that texted STOP. Never texted again until they text START.
+create table if not exists sms_optouts (
+  phone text primary key,
+  created_at timestamptz not null default now()
+);

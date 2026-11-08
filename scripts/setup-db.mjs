@@ -18,7 +18,7 @@ const q = (t, p) => client.query(t, p);
 
 // One shop's records. Tables keyed by (shop_id, id) and tables with their own serial or random id.
 const KEYED = ["customers", "jobs", "cash_days", "settings", "requests", "imports"];
-const OWN_ID = ["change_log", "photos", "lookups"];
+const OWN_ID = ["change_log", "photos", "lookups", "reminders"];
 const SCOPED = [...KEYED, ...OWN_ID];
 
 const slugify = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")

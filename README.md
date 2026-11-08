@@ -60,6 +60,12 @@ this app is `xsiteauto-app`.
 - **Stripe:** set `STRIPE_SECRET_KEY`, add a webhook to `https://app.xsiteauto.com/api/billing/webhook` for
   `checkout.session.completed`, `invoice.paid`, `invoice.payment_failed` and `customer.subscription.*`,
   and set `STRIPE_WEBHOOK_SECRET`.
+- **Text reminders (Twilio):** set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_MESSAGING_SERVICE_SID`
+  (or `TWILIO_FROM`). On the Twilio number (or messaging service), set "A message comes in" to
+  `https://app.xsiteauto.com/api/sms/inbound` (HTTP POST). Run `npm run db:setup` once for the `reminders` tables.
+  The hourly job `/api/cron/reminders` texts each booked job once, from the shop's chosen hour until 8 pm their time.
+  YES confirms, NO flags it on the Today screen and emails the shop, other replies are passed on, STOP opts out.
+  `SMS_TEST=on` records reminders without sending anything.
 - **Turnstile (spam check on signup):** `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 - **XSite Command:** `COMMAND_WEBHOOK_URL` and `COMMAND_WEBHOOK_TOKEN`.
 

@@ -44,7 +44,7 @@ const framable = (res) => { res.headers.set("Content-Security-Policy", "frame-an
 const unframable = (res) => { res.headers.set("Content-Security-Policy", "frame-ancestors 'none'"); res.headers.set("X-Frame-Options", "DENY"); return res; };
 
 // Called by Vercel (nightly job) and Stripe, on whatever address they use.
-const ANY_HOST = ["/api/cron/daily", "/api/billing/webhook"];
+const ANY_HOST = ["/api/cron/daily", "/api/cron/reminders", "/api/billing/webhook", "/api/sms/inbound"];
 
 export async function middleware(req) {
   const path = req.nextUrl.pathname;

@@ -132,6 +132,12 @@ body.wide main .wrap,body.wide header.top .wrap{max-width:1680px}
 .bc-foot select.none{border-style:dashed;color:var(--signal)}
 .techrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;max-width:420px}
 .pill.ready{color:var(--good);border-color:var(--good)}
+.rb{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;background:var(--sunk);color:var(--muted)}
+.rb.ok{background:var(--good-bg);color:var(--good)}.rb.no{background:var(--bad-bg);color:var(--bad)}.rb.ask{background:var(--signal-bg);color:var(--signal)}
+.bc-who .rb{display:block;width:max-content;margin-top:4px}.right .rb{margin-top:3px}
+.remset{border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0;background:var(--sunk)}
+.remset .chk{display:flex;gap:8px;align-items:flex-start;font-weight:600}.remset .chk input{width:auto;margin-top:3px}
+.remprev{font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:10px 12px;max-width:440px;color:var(--ink)}
 .pill.done{background:var(--sunk)}
 .pill.cancelled{text-decoration:line-through}
 .owe{font-family:var(--mono);font-size:13px;color:var(--signal);font-variant-numeric:tabular-nums}
@@ -465,10 +471,50 @@ function render(){
   bindView();
 }
 
+/* ---------- text appointment reminders ---------- */
+const remFor=j=>j&&S.reminders?S.reminders[j.id+"|"+j.date]:null;
+function remBadge(j,short){
+  const r=remFor(j);if(!r||j.status==="cancelled")return "";
+  const t=r.test&&!short?" (test)":"";
+  if(r.status==="confirmed")return `<span class="rb ok" title="Replied: ${esc(r.reply)}">✓ Confirmed${short?"":" by text"}${t}</span>`;
+  if(r.status==="declined")return `<span class="rb no" title="Replied: ${esc(r.reply)}">✗ Can't make it</span>`;
+  if(r.status==="replied")return `<span class="rb ask" title="${esc(r.reply)}">💬 ${short?"Replied":`“${esc(r.reply.length>34?r.reply.slice(0,32)+"…":r.reply)}”`}</span>`;
+  if(r.status==="failed")return `<span class="rb no" title="${esc(r.error)}">Text didn't send</span>`;
+  if(r.status==="optout")return `<span class="rb">No texts (opted out)</span>`;
+  if(j.status==="booked"&&j.date<=today())return `<span class="rb ask">No reply${short?"":" to reminder"}</span>`;
+  return `<span class="rb">Reminder sent${t}</span>`;
+}
+function remNeedsCall(){
+  const d=today();
+  return jobsArr().filter(j=>j.status==="booked"&&j.date>=d&&!j.opening).filter(j=>{const r=remFor(j);return r&&(r.status==="declined"||r.status==="replied"||(r.status==="sent"&&j.date===d))})
+    .sort((a,b)=>(a.date+(a.time||"99")).localeCompare(b.date+(b.time||"99")));
+}
+function remLine(j){
+  const r=remFor(j);if(!r)return "";
+  const at=x=>x?new Date(x).toLocaleString("en-CA",{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+  const what={sent:"No reply yet.",confirmed:"They replied YES.",declined:"They replied NO. Call to rebook.",replied:"They replied:",failed:"The text didn't send"+(r.error?": "+r.error:"."),optout:"Not sent: this customer texted STOP."}[r.status]||"";
+  return `<p class="ws-help gut" style="margin:0;padding-top:8px">${r.status==="optout"?"":`Reminder text sent ${esc(at(r.sentAt))}${r.test?" (test, not really sent)":""}. `}${esc(what)}${r.reply&&r.status!=="sent"?` “${esc(r.reply)}”`:""}</p>`;
+}
+const REM=()=>({on:false,hour:10,days:1,skipSunday:true,...(S.settings.reminders||{})});
+function remPreview(){
+  const name=S.settings.shopName||S.shop?.name||"your shop";
+  return `Hi Jane, this is ${name}. Reminder: your appointment is tomorrow, Tue Nov 10 at 8:00 am for your 2018 Honda Civic. Will you be able to make it? Reply YES or NO.`;
+}
+function remSettings(ro){
+  const r=REM(), mode=S.shop?.sms||"off";
+  const hours=[8,9,10,11,12,13,14,15,16,17,18].map(h=>`<option value="${h}" ${r.hour===h?"selected":""}>${h<12?h+":00 am":h===12?"12:00 pm":(h-12)+":00 pm"}</option>`).join("");
+  return `<div class="remset"><label class="chk"><input type="checkbox" id="s_rem_on" ${r.on?"checked":""} ${ro}> Text customers a reminder before their appointment</label>
+    <p class="ws-help" style="margin:6px 0 10px">They reply YES to confirm or NO if they can't make it. You'll see their answer on the booking, and NO or any other reply shows on the Today screen and is emailed to you.</p>
+    <div class="grid3"><label class="f">Send at<select id="s_rem_hour" ${ro}>${hours}</select></label>
+     <label class="f">How far ahead<select id="s_rem_days" ${ro}><option value="1" ${r.days!==2?"selected":""}>The day before</option><option value="2" ${r.days===2?"selected":""}>Two days before</option></select></label>
+     <label class="chk" style="font-weight:500;align-self:end;padding-bottom:10px"><input type="checkbox" id="s_rem_sun" ${r.skipSunday!==false?"checked":""} ${ro}> No texts on Sunday (Saturday covers them)</label></div>
+    <div class="remprev">${esc(remPreview())}</div>
+    ${mode==="live"?"":`<p class="ws-help" style="margin:8px 0 0">${mode==="test"?"Test mode: reminders are recorded on the bookings but no texts are actually sent.":"Texting is being switched on for XSite Auto. Turn this on now and reminders start going out as soon as it's ready."}</p>`}</div>`;
+}
 function jobItem(j,showDate){
   const t=totals(j), c=cust(j.customerId);
   const when=showDate?`${esc(fmtDay(j.date).replace(/,.*$/,""))}<br>${esc(fmtDay(j.date).split(" ").slice(1).join(" "))}`:esc(fmtTime(j.time)||"Any");
-  let right=`<span class="pill ${j.status}">${STATUS[j.status]||j.status}</span>`;
+  let right=`<span class="pill ${j.status}">${STATUS[j.status]||j.status}</span>${remBadge(j)}`;
   if(j.status!=="cancelled"){
     if(t.total>0) right+= t.balance>0.004?`<span class="owe">${money(t.balance)} owing</span>`:`<span class="paid">Paid ${money(t.total)}</span>`;
   }
@@ -491,7 +537,9 @@ function vToday(){
   const ws=mondayOf(d), we=addDays(ws,6);
   const hrs=r2(all.filter(j=>j.date>=ws&&j.date<=we&&j.status!=="cancelled").reduce((a,j)=>a+(+j.labourHours||0),0));
   const reqs=newRequests();
-  return `${setupCard()}${reqs.length?`<section class="day"><div class="row"><h2>Online requests</h2><div class="spacer"></div><span class="pill booked">${reqs.length} new</span></div>
+  const calls=remNeedsCall();
+  return `${setupCard()}${calls.length?`<section class="day"><div class="row"><h2>Reminder replies</h2><div class="spacer"></div><span class="muted">${calls.length} to look at</span></div>
+    <div class="list">${calls.map(j=>jobItem(j,j.date!==d)).join("")}</div></section>`:""}${reqs.length?`<section class="day"><div class="row"><h2>Online requests</h2><div class="spacer"></div><span class="pill booked">${reqs.length} new</span></div>
     <div class="list">${reqs.map(reqItem).join("")}</div></section>`:""}
   <section class="gauges" aria-label="Today at a glance">
     <div class="gauge"><span class="lbl">Cash taken today</span><span class="val">${money(cashIn)}</span><span class="sub">Goes in the drawer</span></div>
@@ -525,7 +573,7 @@ function bcard(j){
       <span class="bc-top"><span class="ro">RO ${esc(j.ro)}</span>${age?`<span class="age ${late?"late":""}">${esc(age)}</span>`:""}</span>
       <b class="bc-veh">${esc(j.vehicle||"Vehicle not set")}</b>
       ${j.concern?`<span class="bc-what">${esc(j.concern)}</span>`:""}
-      <span class="bc-who">${esc(c?.name||"Walk-in")}${exTag(j)}</span>
+      <span class="bc-who">${esc(c?.name||"Walk-in")}${exTag(j)}${st==="booked"?remBadge(j,true):""}</span>
     </button>
     <div class="bc-foot">${techSel}${stageSel}</div></div>`;
 }
@@ -741,6 +789,7 @@ function vCash(){
       <label class="f">Online booking: most per day<input id="s_perday" inputmode="numeric" value="${esc(S.settings.bookingPerDay??6)}" ${ro}></label>
       <label class="f">Time between drop-offs<select id="s_slotmin" ${ro}>${[15,30,60].map(m=>`<option value="${m}" ${+(S.settings.bookingSlotMinutes||30)===m?"selected":""}>${m} minutes</option>`).join("")}</select></label></div>
      <p class="ws-help">The online booking page only offers times inside your opening hours, and fills up as jobs are booked on the Schedule.</p>
+     ${remSettings(ro)}
      <div class="f">Technicians
       ${(ui.techDraft||techs()).map((t,i)=>`<div class="techrow"><input data-tech="${i}" value="${esc(t.name)}" placeholder="Name" aria-label="Technician ${i+1}" ${ro}>${readOnly?"":`<button class="btn small" type="button" data-trm="${i}">Remove</button>`}</div>`).join("")}
       ${readOnly?"":`<button class="btn small" type="button" id="techAdd" style="align-self:flex-start">+ Add technician</button>`}</div>
@@ -1170,6 +1219,7 @@ async function saveSettings(){
   const tl=(ui.techDraft||S.settings.techs||[]).map(t=>({id:t.id,name:String(t.name||"").replace(/\s+/g," ").trim()})).filter(t=>t.name);
   const doc={...S.settings,techs:tl,shopName:$("#s_name").value.trim(),labourRate:numOrBlank($("#s_rate").value)||0,hstRate:numOrBlank($("#s_hst").value)===""?(isUS()?0:13):numOrBlank($("#s_hst").value),taxName:($("#s_taxname").value.trim()||"HST"),
     bookingPerSlot:Math.max(1,parseInt($("#s_perslot").value,10)||1),bookingPerDay:Math.max(1,parseInt($("#s_perday").value,10)||6),bookingSlotMinutes:+$("#s_slotmin").value||30,
+    reminders:{on:$("#s_rem_on").checked,hour:+$("#s_rem_hour").value||10,days:+$("#s_rem_days").value===2?2:1,skipSunday:$("#s_rem_sun").checked},
     ...(S.settings.timeZone?{timeZone:S.settings.timeZone}:{})};
   if(await write(()=>db.doc("settings/shop").set(doc),"Settings saved")){S.settings=doc;ui.techDraft=null;render()}
 }
@@ -1247,7 +1297,7 @@ function drawJob(isNew){
     </div>
     <label class="f">Notes<textarea id="j_notes" placeholder="Recommended: rear brakes at next visit" ${ro}>${esc(j.notes)}</textarea></label>
   </div>
-  ${j.confirmedAt?`<p class="ws-help gut" style="margin:0;padding-top:8px">Confirmed with the customer by ${esc(j.confirmedBy||"phone")}, ${esc(fmtDay(j.confirmedAt.slice(0,10)))}.</p>`:""}
+  ${j.confirmedAt?`<p class="ws-help gut" style="margin:0;padding-top:8px">Confirmed with the customer by ${esc(j.confirmedBy||"phone")}, ${esc(fmtDay(j.confirmedAt.slice(0,10)))}.</p>`:""}${isNew?"":remLine(j)}
   <div class="sheet-f">${readOnly?"":`<button class="btn primary" type="button" id="j_save">Save job</button>`}
    ${!isNew&&!readOnly&&j.status==="booked"&&j.customerId?`<button class="btn" type="button" id="j_confirm">${j.confirmedAt?"Confirm again":"Confirm with customer"}</button>`:""}<div class="spacer"></div>
    ${!isNew&&!readOnly?`<button class="btn danger" type="button" id="j_del">Delete</button>`:""}</div>
@@ -1829,7 +1879,7 @@ function remoteDb(){
     if(!r.ok)throw{code:"unavailable"};
     const raw=await r.text();
     if(seq!==writeSeq){setTimeout(()=>pull().catch(()=>{}),300);return}   // a save happened while this was loading; fetch again
-    if(raw===lastRaw)return;lastRaw=raw;const d=JSON.parse(raw);store={customers:d.customers||{},jobs:d.jobs||{},cash:d.cash||{},settings:d.settings||{},requests:d.requests||{}};S.shop=d.shop||null;S.me=d.me||null;S.imports=d.imports||[];S.siteHost=d.siteHost||"";readOnly=!!(S.shop&&!["trial","active","past_due"].includes(S.shop.status));ready=true;notify();
+    if(raw===lastRaw)return;lastRaw=raw;const d=JSON.parse(raw);store={customers:d.customers||{},jobs:d.jobs||{},cash:d.cash||{},settings:d.settings||{},requests:d.requests||{}};S.shop=d.shop||null;S.me=d.me||null;S.reminders=d.reminders||{};S.imports=d.imports||[];S.siteHost=d.siteHost||"";readOnly=!!(S.shop&&!["trial","active","past_due"].includes(S.shop.status));ready=true;notify();
   }
   const refresh=()=>{if(!document.hidden)pull().catch(()=>{})};
   pull().catch(e=>{if(e&&e.code!=="signed_out"){const m=$("#loadmsg");if(m)m.textContent="Can't reach the shop book. Check your connection; it will retry on its own."}});

@@ -20,6 +20,8 @@ export async function GET() {
     }
     const { rows: imp } = await q("select id, data, created_at from imports where created_at > now() - interval '7 days' order by created_at desc");
     o.imports = imp.map((r) => ({ id: r.id, ...r.data, createdAt: r.created_at }));
+    const { rows: rem } = await q("select job_id, appt_date::text as date, status, reply, sent_at, replied_at, test, error from reminders where appt_date >= current_date - 7");
+    o.reminders = Object.fromEntries(rem.map((r) => [`${r.job_id}|${r.date}`, { status: r.status, reply: r.reply || "", sentAt: r.sent_at, repliedAt: r.replied_at, test: r.test, error: r.error || "" }]));
     return o;
   });
   out.shop = shopInfo(g.shop);
