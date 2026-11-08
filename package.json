@@ -8,7 +8,8 @@
     "start": "next start",
     "db:setup": "node --env-file=.env.local scripts/setup-db.mjs",
     "user:add": "node --env-file=.env.local scripts/create-user.mjs",
-    "shop:delete": "node --env-file=.env.local scripts/delete-shop.mjs"
+    "shop:delete": "node --env-file=.env.local scripts/delete-shop.mjs",
+    "shop:import-legacy": "node --env-file=.env.local scripts/import-legacy-shop.mjs"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",

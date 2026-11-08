@@ -745,7 +745,7 @@ function vCash(){
       ${(ui.techDraft||techs()).map((t,i)=>`<div class="techrow"><input data-tech="${i}" value="${esc(t.name)}" placeholder="Name" aria-label="Technician ${i+1}" ${ro}>${readOnly?"":`<button class="btn small" type="button" data-trm="${i}">Remove</button>`}</div>`).join("")}
       ${readOnly?"":`<button class="btn small" type="button" id="techAdd" style="align-self:flex-start">+ Add technician</button>`}</div>
      <p class="ws-help">Everyone who works on cars. Each job can be assigned to one of them, and the Board shows who has what. Leave it empty if it's just you.</p>
-     <div class="row"><a class="btn small" href="#team">Team and logins</a>${isStaff()?"":`<a class="btn small" href="#billing">Plan and billing</a>`}${S.shop&&S.shop.status==="trial"?`<a class="btn small" href="#setup">Setup checklist</a>`:""}</div>
+     <div class="row"><a class="btn small" href="#team">Team and logins</a>${isStaff()||(S.shop&&S.shop.original)?"":`<a class="btn small" href="#billing">Plan and billing</a>`}${S.shop&&S.shop.status==="trial"?`<a class="btn small" href="#setup">Setup checklist</a>`:""}</div>
      <div class="row">${readOnly?"":`<button class="btn" type="button" id="saveSettings">Save settings</button>`}
       ${dl?`<button class="btn" type="button" id="exportCsv">Export this month for QuickBooks (.csv)</button>`:""}
       ${!readOnly&&(jobsArr().some(j=>j.example)||Object.values(S.customers).some(c=>c.example))?`<button class="btn danger" type="button" id="clearEx">Remove example data</button>`:""}</div>
@@ -1033,6 +1033,7 @@ function vTeam(){
 
 /* ----- billing ----- */
 function vBilling(){
+  if(S.shop&&S.shop.original)return `<div class="row"><h1>Your plan</h1></div><div class="status ok">✓ XSite Auto is included for ${esc(S.settings.shopName||S.shop.name||"your shop")}. There is nothing to pay.</div>`;
   const sh=S.shop||{},owner=!isStaff(),paid=/paid=1/.test(location.hash),setupBought=/setup=1/.test(location.hash);
   const active=sh.status==="active",canBuy=owner&&sh.billing&&!(active||sh.status==="past_due"||(sh.status==="read_only"&&sh.paid));
   if(ui.dfy===undefined)ui.dfy=false;
