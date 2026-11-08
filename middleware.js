@@ -93,6 +93,7 @@ async function shop(req, path) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
   if (path === "/") return rewrite(req, "/shop.html");
+  if (path === "/admin") return rewrite(req, "/admin.html");   // XSite staff only; its data API checks SUPER_ADMINS
   if (path === "/site") return NextResponse.redirect(new URL("/preview", req.url));
   return next(req);
 }

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · XSite Auto</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/icons/app/192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#eceff3; --surface:#fff; --sunk:#f5f7f9; --ink:#15202b; --muted:#5a6877; --line:#d3dae2;
+  --accent:#1d5ea6; --signal:#b86400; --signal-bg:#fff3e2; --good:#22714a; --good-bg:#e5f4ec; --bad:#b0351f; --bad-bg:#fbe9e5;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#0e141b;--surface:#17202a;--sunk:#121a22;--ink:#e4eaf0;--muted:#93a2b2;--line:#2a3642;
+  --accent:#6da7ea;--signal:#f0a443;--signal-bg:#33240f;--good:#5cc48a;--good-bg:#12291d;--bad:#ef7a62;--bad-bg:#35180f;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--body)}
+a{color:var(--accent)}
+header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{max-width:1240px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.bar h1{margin:0;font:700 24px/1 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.bar small{color:var(--signal);font-weight:600}
+.bar .sp{flex:1}.bar .who{color:var(--muted);font-size:13px}
+.btn{font:600 14px var(--body);padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none}
+main{max-width:1240px;margin:0 auto;padding:16px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tile .v{font:700 30px/1.1 var(--display)}.tile .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tile .s{font-size:12px;color:var(--muted);margin-top:2px}
+.two{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-top:14px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.panel h2{margin:0;padding:12px 14px;font:700 18px var(--display);text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line)}
+.where{padding:8px 14px 12px}
+.where .r{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px;padding:5px 0;cursor:pointer}
+.where .r:hover b{color:var(--accent)}
+.where .r i{grid-column:1/-1;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;display:block}
+.where .r i span{display:block;height:100%;background:var(--accent)}
+.where .r.on b{color:var(--accent)}
+.where h3{margin:10px 0 2px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.filters{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.filters input,.filters select{font:14px var(--body);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.filters input{flex:1;min-width:180px}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px}
+tr.row{cursor:pointer}tr.row:hover td{background:var(--sunk)}
+td .n{font-weight:600;min-width:130px}td .m{color:var(--muted);font-size:12px}
+.num{font-family:var(--mono);font-size:13px;text-align:right;white-space:nowrap}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.b-trial{background:var(--signal-bg);color:var(--signal)}.b-active{background:var(--good-bg);color:var(--good)}
+.b-read_only,.b-past_due{background:var(--bad-bg);color:var(--bad)}.b-closed{background:var(--sunk);color:var(--muted)}.b-original{background:var(--sunk);color:var(--accent)}
+tr.det td{background:var(--sunk);padding:14px}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}
+.dg h4{margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.dg div{font-size:14px;word-break:break-word}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.two aside{order:-1}}
+@media (max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}.bar .who{display:none}.bar h1{font-size:20px}.bar{gap:8px}.btn{padding:7px 10px}main{padding:12px}
+  thead{display:none}table,tbody,tr,td{display:block;width:100%}tr.row{border-bottom:1px solid var(--line);padding:6px 0}
+  tr.row td{border:0;padding:3px 14px}td.num{text-align:left}td[data-l]::before{content:attr(data-l)": ";color:var(--muted);font-family:var(--body);font-size:12px}
+  .dg{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<header><div class="bar"><h1>XSite Auto <small>Admin</small></h1><span class="sp"></span><span class="who" id="who"></span><button class="btn" id="reload">Refresh</button><a class="btn" href="/">Shop Book</a></div></header>
+<main id="app"><div class="empty">Loading…</div></main>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const day=d=>d?new Date(d).toLocaleDateString("en-CA",{month:"short",day:"numeric",year:"numeric"}):"";
+const ago=d=>{if(!d)return "never";const m=(Date.now()-new Date(d))/6e4;if(m<60)return Math.max(1,Math.round(m))+" min ago";if(m<1440)return Math.round(m/60)+" h ago";const dd=Math.round(m/1440);return dd===1?"1 day ago":dd+" days ago"};
+const STATUS={trial:"Trial",active:"Active",past_due:"Payment failed",read_only:"Trial ended",closed:"Closed"};
+const REGION={ON:"Ontario",QC:"Quebec",BC:"British Columbia",AB:"Alberta",MB:"Manitoba",SK:"Saskatchewan",NS:"Nova Scotia",NB:"New Brunswick",NL:"Newfoundland and Labrador",PE:"Prince Edward Island",NT:"Northwest Territories",YT:"Yukon",NU:"Nunavut"};
+const STATES={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+let D=[],open=null,f={q:"",status:"",country:"",region:""};
+
+async function load(){
+  const r=await fetch("/api/admin/shops",{credentials:"same-origin",cache:"no-store"});
+  if(r.status===401){location.href="/login";return}
+  if(!r.ok){$("#app").innerHTML=`<div class="empty">This page is for XSite staff. Your login isn't on the admin list.</div>`;return}
+  const j=await r.json();D=j.shops;$("#who").textContent=j.me||"";render();
+}
+function badge(s){return s.original?`<span class="badge b-original">XSite's own</span>`:`<span class="badge b-${s.status}">${STATUS[s.status]||s.status}</span>`}
+function statusNote(s){
+  if(s.original)return "Never billed";
+  if(s.status==="trial")return s.daysLeft===0?"Last day":`${s.daysLeft} day${s.daysLeft===1?"":"s"} left`;
+  if(s.paying)return `$${s.monthly} ${s.currency}/mo since ${day(s.convertedAt)}`;
+  if(s.status==="read_only")return `Ended ${day(s.trialEndsAt)}`;
+  return "";
+}
+const place=s=>[s.town,s.region,s.country].filter(Boolean).join(", ");
+const regionName=(s)=>s.country==="US"?`${STATES[s.region]||s.region||"Unknown"}, US`:(REGION[s.region]||s.region||"Unknown");
+function shown(){
+  const q=f.q.trim().toLowerCase();
+  return D.filter(s=>(!f.status||(f.status==="paying"?s.paying:f.status==="original"?s.original:s.status===f.status&&!s.original))
+    &&(!f.country||s.country===f.country)&&(!f.region||regionName(s)===f.region)
+    &&(!q||[s.name,s.slug,s.town,s.region,s.owner?.name,s.owner?.email,s.phone,s.ownerMobile].join(" ").toLowerCase().includes(q)));
+}
+function render(){
+  const real=D.filter(s=>!s.original);
+  const n=k=>real.filter(s=>s.status===k).length;
+  const paying=real.filter(s=>s.paying);
+  const mrr=c=>paying.filter(s=>s.currency===c).reduce((a,s)=>a+s.monthly,0);
+  const week=real.filter(s=>Date.now()-new Date(s.createdAt)<7*864e5).length;
+  const byRegion={};for(const s of D){const k=regionName(s);(byRegion[k]=byRegion[k]||{n:0,c:s.country}).n++}
+  const regions=Object.entries(byRegion).sort((a,b)=>b[1].n-a[1].n),max=Math.max(1,...regions.map(r=>r[1].n));
+  const list=shown();
+  const whereList=c=>regions.filter(([,v])=>v.c===c).map(([k,v])=>`<div class="r ${f.region===k?"on":""}" data-region="${esc(k)}"><b>${esc(k.replace(", US",""))}</b><span class="num">${v.n}</span><i><span style="width:${v.n/max*100}%"></span></i></div>`).join("")||`<div class="m" style="color:var(--muted);font-size:13px">None yet</div>`;
+  $("#app").innerHTML=`
+  <div class="tiles">
+   <div class="tile"><div class="l">Shops</div><div class="v">${real.length}</div><div class="s">${week} new this week</div></div>
+   <div class="tile"><div class="l">In trial</div><div class="v">${n("trial")}</div></div>
+   <div class="tile"><div class="l">Paying</div><div class="v">${paying.length}</div><div class="s">${real.filter(s=>s.setupPaidAt).length} bought setup</div></div>
+   <div class="tile"><div class="l">Monthly revenue</div><div class="v">$${mrr("CAD")}</div><div class="s">CAD · plus $${mrr("USD")} USD</div></div>
+   <div class="tile"><div class="l">Trial ended</div><div class="v">${n("read_only")}</div><div class="s">${n("past_due")} payment failed</div></div>
+   <div class="tile"><div class="l">Closed</div><div class="v">${n("closed")}</div></div>
+  </div>
+  <div class="two">
+   <section class="panel">
+    <div class="filters">
+     <input id="q" type="search" placeholder="Search shop, town, owner, email or phone" value="${esc(f.q)}">
+     <select id="st"><option value="">All statuses</option>${[["trial","Trial"],["paying","Paying"],["read_only","Trial ended"],["past_due","Payment failed"],["closed","Closed"],["original","XSite's own"]].map(([v,l])=>`<option value="${v}" ${f.status===v?"selected":""}>${l}</option>`).join("")}</select>
+     <select id="co"><option value="">Canada and US</option><option value="CA" ${f.country==="CA"?"selected":""}>Canada</option><option value="US" ${f.country==="US"?"selected":""}>United States</option></select>
+     ${f.region?`<button class="btn" id="clr">${esc(f.region)} ✕</button>`:""}
+    </div>
+    ${list.length?`<table><thead><tr><th>Shop</th><th>Location</th><th>Owner</th><th>Status</th><th>Signed up</th><th class="num">Customers</th><th class="num">Jobs</th><th class="num">Bookings</th><th>Last active</th></tr></thead><tbody>
+    ${list.map(s=>`<tr class="row" data-id="${s.id}"><td><div class="n">${esc(s.name)}</div><div class="m">${esc(s.slug)}</div></td>
+      <td data-l="Location">${esc(place(s))}</td>
+      <td data-l="Owner"><div>${esc(s.owner?.name||"")}</div><div class="m">${esc(s.owner?.email||"")}</div></td>
+      <td>${badge(s)}<div class="m">${esc(statusNote(s))}</div></td>
+      <td data-l="Signed up">${day(s.createdAt)}</td>
+      <td class="num" data-l="Customers">${s.customers}</td><td class="num" data-l="Jobs">${s.jobs}</td><td class="num" data-l="Bookings">${s.requests}</td>
+      <td data-l="Last active">${ago(s.lastActive)}</td></tr>
+      ${open===s.id?detail(s):""}`).join("")}</tbody></table>`:`<div class="empty">No shops match.</div>`}
+   </section>
+   <aside class="panel"><h2>Where they are</h2><div class="where"><h3>Canada</h3>${whereList("CA")}<h3>United States</h3>${whereList("US")}</div></aside>
+  </div>`;
+  $("#q").oninput=e=>{f.q=e.target.value;const p=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(p,p)};
+  $("#st").onchange=e=>{f.status=e.target.value;render()};
+  $("#co").onchange=e=>{f.country=e.target.value;render()};
+  if($("#clr"))$("#clr").onclick=()=>{f.region="";render()};
+  document.querySelectorAll("[data-region]").forEach(el=>el.onclick=()=>{f.region=f.region===el.dataset.region?"":el.dataset.region;render()});
+  document.querySelectorAll("tr.row").forEach(el=>el.onclick=()=>{open=open===el.dataset.id?null:el.dataset.id;render()});
+}
+function detail(s){
+  const addr=[s.street,s.town,s.region,s.postal].filter(Boolean).join(", ");
+  const map=addr?`<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name+", "+addr)}" target="_blank" rel="noopener">Map</a>`:"";
+  const tel=p=>p?`<a href="tel:${esc(p.replace(/[^\d+]/g,""))}">${esc(p)}</a>`:"";
+  return `<tr class="det"><td colspan="9"><div class="dg">
+   <div><h4>Address</h4>${esc(addr)||"Not given"} ${map}</div>
+   <div><h4>Owner</h4>${esc(s.owner?.name||"")}<br>${s.owner?`<a href="mailto:${esc(s.owner.email)}">${esc(s.owner.email)}</a>`:""}${s.ownerMobile?`<br>Mobile ${tel(s.ownerMobile)}`:""}</div>
+   <div><h4>Shop</h4>${s.phone?`Phone ${tel(s.phone)}<br>`:""}${s.techs?`${esc(s.techs)} technicians<br>`:""}${s.logins} login${s.logins===1?"":"s"}</div>
+   <div><h4>Online booking</h4><a href="${esc(s.bookingUrl)}" target="_blank" rel="noopener">Booking page</a>${s.embedSeenAt?`<br>On their website since ${day(s.embedSeenAt)}`:"<br>Not on their website yet"}</div>
+   <div><h4>Website</h4>${s.website?`<a href="${esc(s.website)}" target="_blank" rel="noopener">${esc(s.website.replace(/^https?:\/\//,""))}</a><br>`:""}${s.domains.length?`Hosted by us: ${s.domains.map(esc).join(", ")}<br>`:""}XSite site ${s.sitePublished?"published":"not published"}</div>
+   <div><h4>Using it</h4>${s.customers} customers${s.imported?" (QuickBooks import done)":""}, ${s.jobs} jobs, ${s.requests} bookings<br>Last active ${ago(s.lastActive)}</div>
+   <div><h4>Account</h4>Signed up ${day(s.createdAt)}${s.source&&!s.original?` via ${esc(s.source)}`:""}${s.trialEndsAt?`<br>Trial ${s.status==="trial"?"ends":"ended"} ${day(s.trialEndsAt)}`:""}${s.convertedAt&&!s.original?`<br>Paid since ${day(s.convertedAt)}`:""}</div>
+   <div><h4>Done-for-you setup</h4>${s.setupPaidAt?`Bought ${day(s.setupPaidAt)}`:"Not bought"}</div>
+   <div><h4>Stripe</h4>${s.stripeCustomer?`<a href="https://dashboard.stripe.com/customers/${esc(s.stripeCustomer)}" target="_blank" rel="noopener">Open customer</a>`:"No billing yet"}</div>
+  </div></td></tr>`;
+}
+$("#reload").onclick=load;
+load();
+</script></body></html>
