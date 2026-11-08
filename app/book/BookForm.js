@@ -196,7 +196,7 @@ export default function BookForm({ checkin, shopName, phone, tel, slot, onTaken,
 
       <label className="consent">
         <input id="b-consent" type="checkbox" checked={f.consent} onChange={set("consent")} />
-        <span>{shopName} can keep these details to contact me about my vehicle. They won't be shared with anyone else.</span>
+        <span>{shopName} can keep these details to contact me about my vehicle, including text messages about my appointment such as reminders. Message and data rates may apply. Reply STOP to opt out. My details won't be shared with anyone else.</span>
       </label>
 
       {err && <p className="book-err" role="alert" ref={errRef}>{err}{taken && <> <button type="button" className="bk-link" onClick={onTaken}>Pick another time</button></>}</p>}
