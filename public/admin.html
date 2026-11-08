@@ -62,7 +62,7 @@ tr.det td{background:var(--sunk);padding:14px}
   tr.row td{border:0;padding:3px 14px}td.num{text-align:left}td[data-l]::before{content:attr(data-l)": ";color:var(--muted);font-family:var(--body);font-size:12px}
   .dg{grid-template-columns:1fr 1fr}}
 </style></head><body>
-<header><div class="bar"><h1>XSite Auto <small>Admin</small></h1><span class="sp"></span><span class="who" id="who"></span><button class="btn" id="reload">Refresh</button><a class="btn" href="/">Shop Book</a></div></header>
+<header><div class="bar"><h1>XSite Auto <small>Admin</small></h1><span class="sp"></span><span class="who" id="who"></span><button class="btn" id="reload">Refresh</button><a class="btn" href="/" id="sb" hidden>Shop Book</a><button class="btn" id="so" hidden>Sign out</button></div></header>
 <main id="app"><div class="empty">Loading…</div></main>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
@@ -78,7 +78,7 @@ async function load(){
   const r=await fetch("/api/admin/shops",{credentials:"same-origin",cache:"no-store"});
   if(r.status===401){location.href="/login";return}
   if(!r.ok){$("#app").innerHTML=`<div class="empty">This page is for XSite staff. Your login isn't on the admin list.</div>`;return}
-  const j=await r.json();D=j.shops;$("#who").textContent=j.me||"";render();
+  const j=await r.json();D=j.shops;$("#who").textContent=j.me||"";$(j.hasShop?"#sb":"#so").hidden=false;render();
 }
 function badge(s){return s.original?`<span class="badge b-original">XSite's own</span>`:`<span class="badge b-${s.status}">${STATUS[s.status]||s.status}</span>`}
 function statusNote(s){
@@ -159,5 +159,6 @@ function detail(s){
   </div></td></tr>`;
 }
 $("#reload").onclick=load;
+$("#so").onclick=()=>fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"}).finally(()=>location.href="/login");
 load();
 </script></body></html>

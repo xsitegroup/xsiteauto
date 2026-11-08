@@ -47,5 +47,5 @@ export async function GET() {
       monthly: paying ? PRICES[cur].monthly / 100 : 0,
     };
   });
-  return NextResponse.json({ shops, me: user.email, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json({ shops, me: user.email, hasShop: !!user.sid, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
 }

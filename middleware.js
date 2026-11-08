@@ -84,14 +84,15 @@ async function shop(req, path) {
   if (path === "/reset" || path === "/invite") return rewrite(req, "/reset.html");
   if (starts(path, APP_OPEN)) return next(req);
   const token = req.cookies.get("frs")?.value;
-  let ok = false;
+  let ok = false, who = null;
   if (token && process.env.AUTH_SECRET) {
-    try { await jwtVerify(token, new TextEncoder().encode(process.env.AUTH_SECRET)); ok = true; } catch {}
+    try { who = (await jwtVerify(token, new TextEncoder().encode(process.env.AUTH_SECRET))).payload; ok = true; } catch {}
   }
   if (!ok) {
     if (path.startsWith("/api/")) return NextResponse.json({ error: "signed_out" }, { status: 401 });
     return NextResponse.redirect(new URL("/login", req.url));
   }
+  if (path === "/" && who?.role === "admin" && !who?.sid) return NextResponse.redirect(new URL("/admin", req.url));   // XSite admin, no shop
   if (path === "/") return rewrite(req, "/shop.html");
   if (path === "/admin") return rewrite(req, "/admin.html");   // XSite staff only; its data API checks SUPER_ADMINS
   if (path === "/site") return NextResponse.redirect(new URL("/preview", req.url));
