@@ -48,7 +48,7 @@ try {
     const h = host.toLowerCase().replace(/^www\./, "");
     const { rows: [taken] } = await db.query("select s.slug from shop_domains d join shops s on s.id = d.shop_id where d.host = $1", [h]);
     if (taken && taken.slug !== slug) throw new Error(`${h} already belongs to ${taken.slug}.`);
-    await db.query("insert into shop_domains (host, shop_id, kind) values ($1, $2, 'site') on conflict (host) do nothing", [h]);
+    await db.query("insert into shop_domains (host, shop_id, kind) values ($1, $2, 'site') on conflict (host) do nothing", [h, shop.id]);
   }
   await db.query("commit");
   console.log(`${shop.name}: website content loaded (${uploaded.size} photos), ${next.published ? "published" : "not published"}.`);
