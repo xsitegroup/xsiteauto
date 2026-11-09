@@ -12,7 +12,8 @@
     "shop:import-legacy": "node --env-file=.env.local scripts/import-legacy-shop.mjs",
     "user:admin": "node --env-file=.env.local scripts/make-admin.mjs",
     "shop:comp": "node --env-file=.env.local scripts/comp-shop.mjs",
-    "db:app-role": "node --env-file=.env.local scripts/setup-app-role.mjs"
+    "db:app-role": "node --env-file=.env.local scripts/setup-app-role.mjs",
+    "shop:load-site": "node --env-file=.env.local scripts/load-site.mjs"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
