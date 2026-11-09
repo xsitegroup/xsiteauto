@@ -9,7 +9,7 @@ import { getReviews, fmtPhone, telHref } from "@/lib/site";
 import { loadPublic } from "@/lib/public";
 import { takesBookings } from "@/lib/shop";
 import { postalLabel } from "@/lib/locale";
-import { fmtTime, fmtPrice, addressLine, has, Stars, HeroArt } from "../site/SiteView";
+import { fmtTime, fmtPrice, addressLine, has, Stars, HeroArt, SiteTheme } from "../site/SiteView";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +57,7 @@ function CallUs({ site, embed }) {
   const tel = telHref(site.phone);
   return (
     <main className={"book" + (embed ? " embed" : "")}>
+        {!embed && <SiteTheme site={site} />}
       <div className="wrap book-in">
         <div className="book-head">
           <h1>Book with {site.shopName}</h1>
@@ -98,6 +99,7 @@ export default async function Book({ searchParams }) {
       <>
         <TopBar site={site} base={base} />
         <main className="book">
+          <SiteTheme site={site} />
           <div className="wrap book-in">
             <div className="book-head">
               <p className="eyebrow">At the shop</p>
@@ -126,6 +128,7 @@ export default async function Book({ searchParams }) {
     <>
       <TopBar site={site} base={base} />
       <main className="bp">
+          <SiteTheme site={site} />
         {photos.length > 0 ? (
           <div className={"bp-gallery n" + photos.length}>
             {photos.map((u, i) => <img key={u} src={u} alt={i === 0 ? `${site.shopName}` : ""} className={i === 0 ? "main" : ""} />)}

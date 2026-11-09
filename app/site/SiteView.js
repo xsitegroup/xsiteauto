@@ -52,10 +52,37 @@ function faqLd(faqs) {
   return { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) };
 }
 
+
+// A shop's own colours: site.theme ("dark" or "light", otherwise follows the visitor's device) and
+// site.accent (#rrggbb, replaces the amber). Written as a <style> after site.css so it wins.
+const LIGHT_VARS = "--paper:#eef1f4;--surface:#ffffff;--ink:#111a23;--ink-2:#3d4954;--muted:#56636f;--line:#d4dbe2;--signal:#e8961f;--signal-text:#a8620a;--signal-ink:#111a23;--link:#1d5ea6;--board:#16202a;--board-ink:#f1f4f7;--board-muted:#9fb0bf;--board-line:#2d3b48;--night:#111a23;--night-ink:#eef1f4;--night-muted:#a7b4c0;--good:#22714a;color-scheme:light;";
+const DARK_VARS = "--paper:#0d1318;--surface:#151e27;--ink:#e6ebf0;--ink-2:#c3ccd5;--muted:#95a3b1;--line:#26323d;--signal:#f0a443;--signal-text:#f0a443;--signal-ink:#111a23;--link:#74aef0;--board:#0a1016;--board-ink:#eef2f5;--board-muted:#8fa1b1;--board-line:#24313d;--night:#070b0f;--night-ink:#e6ebf0;--night-muted:#95a3b1;--good:#5cc48a;color-scheme:dark;";
+function accentVars(hex, dark) {
+  const n = parseInt(hex.slice(1), 16), rgb = [n >> 16, (n >> 8) & 255, n & 255];
+  const lum = rgb.map((c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+  const L = 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+  const ink = L > 0.35 ? "#111a23" : "#ffffff";
+  // On light backgrounds, text in the accent colour is darkened so it stays readable.
+  const text = dark ? hex : "#" + rgb.map((c) => Math.round(c * 0.62).toString(16).padStart(2, "0")).join("");
+  return `--signal:${hex};--signal-text:${text};--signal-ink:${ink};`;
+}
+export function themeCss(site) {
+  const accent = /^#[0-9a-fA-F]{6}$/.test(site?.accent || "") ? site.accent.toLowerCase() : "";
+  const mode = site?.theme === "dark" || site?.theme === "light" ? site.theme : "";
+  if (!accent && !mode) return "";
+  if (mode) return `:root{${mode === "dark" ? DARK_VARS : LIGHT_VARS}${accent ? accentVars(accent, mode === "dark") : ""}}`;
+  return `:root{${accentVars(accent, false)}}@media (prefers-color-scheme: dark){:root{${accentVars(accent, true)}}}`;
+}
+export function SiteTheme({ site }) {
+  const css = themeCss(site);
+  return css ? <style dangerouslySetInnerHTML={{ __html: css }} /> : null;
+}
+
 export function ComingSoon({ site }) {
   const tel = telHref(site.phone);
   return (
     <main className="soon">
+      <SiteTheme site={site} />
       <div className="soon-in">
         <p className="eyebrow">{site.town ? `Auto repair · ${site.town}` : "Auto repair"}</p>
         <h1 className="wordmark">{site.shopName}</h1>
@@ -100,6 +127,7 @@ export default function SiteView({ site, reviews, preview = false }) {
 
   return (
     <>
+      <SiteTheme site={site} />
       {preview && (
         <div className="preview-bar">Preview{site.published ? " · this is what visitors see" : " · not published yet, visitors see a coming-soon page"}</div>
       )}

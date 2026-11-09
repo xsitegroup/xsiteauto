@@ -1573,7 +1573,7 @@ function openCustomerForm(id,returnToJob){
 
 /* ---------- website tab ---------- */
 const SITE_BLANK={published:false,headline:"",intro:"",about:"",aboutPhoto:"",phone:"",textPhone:"",email:"",street:"",town:"",province:"ON",postal:"",
-  hours:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map((day,i)=>i<5?{day,closed:false,open:"08:00",close:"17:00"}:{day,closed:true,open:"",close:""}),hoursNote:"",services:[],priceNote:"",photos:[],googleReviewsUrl:"",googlePlaceId:"",facebookUrl:"",instagramUrl:"",
+  hours:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map((day,i)=>i<5?{day,closed:false,open:"08:00",close:"17:00"}:{day,closed:true,open:"",close:""}),hoursNote:"",services:[],priceNote:"",photos:[],googleReviewsUrl:"",googlePlaceId:"",facebookUrl:"",instagramUrl:"",accent:"",theme:"",
   featuredReviews:[],"banner":{"on":false,"text":"","linkText":"Book a time","link":"/book"},"heroPhoto":"","proof":["","","",""],"specialtiesTitle":"","specialtiesIntro":"","specialties":[],"beforeAfter":[],"aboutTitle":"","credentials":"","faqs":[]};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const savedSite=()=>{const o={...clone(SITE_BLANK),...clone(S.site||{})};o.proof=[0,1,2,3].map(i=>(o.proof||[])[i]||"");
@@ -1700,6 +1700,10 @@ function vWebsite(){
        <a class="btn small" target="_blank" rel="noopener" href="https://www.facebook.com/search/pages/?q=${encodeURIComponent((S.settings.shopName||"")+" "+(d.town||""))}">Search Facebook</a></div>`}
      <div id="wsFindOut"></div>
      <p class="ws-help">Facebook doesn't allow automatic lookups. Search Facebook opens the results; copy the shop's page address into Facebook page below.</p></section>
+   <section class="panel"><h2>Colours</h2>
+     <div class="grid3"><label class="f">Look<select data-sf="theme" ${ro}>${[["","Follow the visitor's phone (light or dark)"],["light","Always light"],["dark","Always dark"]].map(([v,l])=>`<option value="${v}" ${(d.theme||"")===v?"selected":""}>${l}</option>`).join("")}</select></label>
+     <label class="f">Main colour<input type="color" data-sf="accent" value="${esc(/^#[0-9a-fA-F]{6}$/.test(d.accent||"")?d.accent:"#e8961f")}" ${ro}></label></div>
+     <p class="ws-help">The main colour is used for buttons, highlights and the booking form. Pick one from the shop's sign or logo.</p></section>
    <section class="panel"><h2>Social media</h2>
      <label class="f">Facebook page${inp("facebookUrl","https://www.facebook.com/…",'inputmode="url"')}</label>
      <label class="f">Instagram (optional)${inp("instagramUrl","https://www.instagram.com/…",'inputmode="url"')}</label>
