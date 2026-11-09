@@ -10,7 +10,9 @@
     "user:add": "node --env-file=.env.local scripts/create-user.mjs",
     "shop:delete": "node --env-file=.env.local scripts/delete-shop.mjs",
     "shop:import-legacy": "node --env-file=.env.local scripts/import-legacy-shop.mjs",
-    "user:admin": "node --env-file=.env.local scripts/make-admin.mjs"
+    "user:admin": "node --env-file=.env.local scripts/make-admin.mjs",
+    "shop:comp": "node --env-file=.env.local scripts/comp-shop.mjs",
+    "db:app-role": "node --env-file=.env.local scripts/setup-app-role.mjs"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
