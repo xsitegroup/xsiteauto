@@ -2,8 +2,8 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Free guides for repair shops · XSite Auto</title>
-<meta name="description" content="Get The Small Shop Playbook and the XSite Auto brochure, free by email.">
+<title>Free white papers for repair shops · XSite Auto</title>
+<meta name="description" content="Free white papers for independent repair shops: Ten Places Small Shops Lose Money and Running the Day.">
 <link rel="icon" href="/icons/app/192.png">
 <meta name="theme-color" content="#1A5FA8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -75,9 +75,10 @@ textarea{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1p
   <div class="pitch">
     <p class="pill">Free · Sent by email</p>
     <h1>Run the shop, not the paperwork.</h1>
-    <p>Tell us a little about your shop and we'll email you two free guides. No sales pitch in the guides, just practical ideas you can use this week.</p>
+    <p>Tell us a little about your shop and we'll email you our free white papers. No sales pitch, just practical ideas you can use this week.</p>
     <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="book"><span class="ic">PDF</span><div><b>The Small Shop Playbook</b><small>Where small shops lose money every week, how to run the day from first call to close, and how to keep the schedule full.</small></div></div>
+      <div class="book"><span class="ic">PDF</span><div><b>Ten Places Small Shops Lose Money</b><small>The everyday leaks in a small shop, what each one can cost, and a step-by-step fix for each.</small></div></div>
+      <div class="book"><span class="ic">PDF</span><div><b>Running the Day, From First Call to Close</b><small>A routine for the counter, the bays and the cash drawer, with a printable check-in sheet and end-of-day close.</small></div></div>
       <div class="book"><span class="ic b">PDF</span><div><b>The XSite Auto brochure</b><small>What the software does, how setup works and what it costs, in US or Canadian dollars.</small></div></div>
     </div>
     <p class="fine">Built alongside a working Niagara repair shop run by a former Toyota master technician. XSite Group has served owner-run businesses since 2011.</p>
@@ -114,24 +115,24 @@ textarea{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1p
     </div>
     <label>Anything else? <small>Optional</small><textarea name="notes" maxlength="600"></textarea></label>
     <div class="trap" aria-hidden="true"><label>Leave this empty<input name="website2" tabindex="-1" autocomplete="off"></label></div>
-    <label class="agree"><input type="checkbox" name="agree"><span>Email me the guides. XSite may follow up once or twice by email or phone. See our <a href="https://xsiteauto.com/privacy" target="_blank" rel="noopener">privacy policy</a>.</span></label>
+    <label class="agree"><input type="checkbox" name="agree"><span>Email me the white papers. XSite may follow up once or twice by email or phone. See our <a href="https://xsiteauto.com/privacy" target="_blank" rel="noopener">privacy policy</a>.</span></label>
     <div class="err" id="err" role="alert"></div>
-    <button class="go" id="go" type="submit">Email me the guides</button>
+    <button class="go" id="go" type="submit">Email me the white papers</button>
     <p class="center">We'll send a link to confirm your email first.</p>
   </form>
 
   <div class="done" id="check" hidden>
     <p class="sec">Almost done</p>
     <h2>Check your email</h2>
-    <p>We sent a confirm link to <b id="sentTo"></b>. Click it and your guides arrive right away. If it's not there in a minute or two, check your junk folder.</p>
+    <p>We sent a confirm link to <b id="sentTo"></b>. Click it and your white papers arrive right away. If it's not there in a minute or two, check your junk folder.</p>
     <p id="dev" hidden></p>
     <p style="font-size:15px"><a href="#" id="back">Use a different email</a></p>
   </div>
 
   <div class="done" id="sent" hidden>
     <p class="sec">You're all set</p>
-    <h2>Your guides are on the way</h2>
-    <p>Your email is confirmed, and the Playbook and brochure are in your inbox now. Want to see it running with a shop like yours?</p>
+    <h2>Your white papers are on the way</h2>
+    <p>Your email is confirmed, and the white papers and brochure are in your inbox now. Want to see it running with a shop like yours?</p>
     <div class="btns"><a class="btn1" href="/signup?ref=guides">Start a free 14-day trial</a><a class="btn2" href="mailto:david@xsitegroup.ca?subject=XSite%20Auto%20demo">Book a 15-minute demo</a><a class="btn2" href="tel:9053460864">905.346.0864</a></div>
   </div>
 
@@ -155,7 +156,7 @@ setCountry(country);
 f.phone.addEventListener("input",e=>{let d=e.target.value.replace(/\D/g,"");if(d.length===11&&d[0]==="1")d=d.slice(1);if(d.length>10)return;e.target.value=d.slice(0,3)+(d.length>3?"-"+d.slice(3,6):"")+(d.length>6?"-"+d.slice(6):"")});
 const q=new URLSearchParams(location.search);
 if(q.get("sent")){show("sent");window.xsTrack&&xsTrack("generate_lead",{method:"guides"})}
-else if(q.get("link")){show("oops");if(q.get("link")==="mail"){document.getElementById("oopsH").textContent="We couldn't send the email";document.getElementById("oopsP").textContent="Your email is confirmed, but sending the guides failed. Click your confirm link again in a few minutes, or call us and we'll send them."}
+else if(q.get("link")){show("oops");if(q.get("link")==="mail"){document.getElementById("oopsH").textContent="We couldn't send the email";document.getElementById("oopsP").textContent="Your email is confirmed, but sending the white papers failed. Click your confirm link again in a few minutes, or call us and we'll send them."}
   else if(q.get("link")==="bad"){document.getElementById("oopsH").textContent="That link didn't work";}}
 f.addEventListener("submit",async e=>{
   e.preventDefault();err.textContent="";f.querySelectorAll("[aria-invalid]").forEach(x=>x.removeAttribute("aria-invalid"));
@@ -169,7 +170,7 @@ f.addEventListener("submit",async e=>{
       if(d.devLink){const p=document.getElementById("dev");p.hidden=false;p.innerHTML='Test mode: <a href="'+d.devLink+'">confirm link</a>'}}
     else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
   }catch(x){err.textContent="Can't reach XSite Auto. Check your connection and try again."}
-  go.disabled=false;go.textContent="Email me the guides";
+  go.disabled=false;go.textContent="Email me the white papers";
 });
 document.getElementById("back").onclick=e=>{e.preventDefault();show("f")};
 </script>

@@ -32,7 +32,7 @@ export async function GET(req) {
   await notifyXSite("lead_confirmed", {
     subject: `Info request: ${d.shopName} (${d.city}, ${d.region})`,
     heading: "Someone asked for more information",
-    intro: `${d.name} confirmed their email and has the Playbook and brochure. A call in the next day or two is the best time to follow up.`,
+    intro: `${d.name} confirmed their email and has the white papers and brochure. A call in the next day or two is the best time to follow up.`,
     rows: [["Shop", d.shopName], ["Contact", d.name], ["Phone", d.phone], ["Email", lead.email], ["Where", `${d.city}, ${d.region}, ${d.country}`],
       ["Technicians", d.techs], ["Uses now", d.software || "not given"], ["Interested in", want], ["Notes", d.notes || ""], ["Came from", d.source || ""]],
     data: { lead: { id: lead.id, ...d, email: lead.email, guides: GUIDES(d.country).map((g) => g.name) } },
