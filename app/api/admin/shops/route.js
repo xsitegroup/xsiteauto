@@ -47,5 +47,8 @@ export async function GET() {
       monthly: paying ? PRICES[cur].monthly / 100 : 0,
     };
   });
-  return NextResponse.json({ shops, me: user.email, hasShop: !!user.sid, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
+  const leads = await asSystem(async (q) => (await q(
+    "select id, email, data, created_at, verified_at, sent_at from leads order by created_at desc limit 200")).rows)
+    .map((l) => ({ id: l.id, email: l.email, ...l.data, createdAt: l.created_at, verifiedAt: l.verified_at, sentAt: l.sent_at }));
+  return NextResponse.json({ shops, leads, me: user.email, hasShop: !!user.sid, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
 }

@@ -165,3 +165,17 @@ create table if not exists sms_optouts (
   phone text primary key,
   created_at timestamptz not null default now()
 );
+
+-- "Send me more information" requests from xsiteauto.com. The guides go out once the email is confirmed.
+create table if not exists leads (
+  id uuid primary key default gen_random_uuid(),
+  email text not null,
+  data jsonb not null,
+  token_hash text not null unique,
+  ip_hash text,
+  created_at timestamptz not null default now(),
+  verified_at timestamptz,
+  sent_at timestamptz
+);
+create index if not exists leads_email on leads (lower(email), created_at desc);
+create index if not exists leads_ip on leads (ip_hash, created_at desc);

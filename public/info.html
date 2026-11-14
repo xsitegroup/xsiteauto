@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Free guides for repair shops · XSite Auto</title>
+<meta name="description" content="Get The Small Shop Playbook and the XSite Auto brochure, free by email.">
+<link rel="icon" href="/icons/app/192.png">
+<meta name="theme-color" content="#1A5FA8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--blue:#1A5FA8;--navy:#0E2A4F;--muted:#44587a;--soft:#F2F7FD;--line:#c9d6e6;--bad:#b0351f}
+*{box-sizing:border-box}
+html,body{margin:0;background:linear-gradient(180deg,#F2F7FD 0%,#fff 100%);color:var(--navy);font:16px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+a{color:var(--blue)}
+header{max-width:1200px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo b{font:700 24px Arial,Helvetica,sans-serif;color:var(--blue)}
+header span{font-size:15px;color:var(--muted)}
+main{max-width:1200px;margin:0 auto;padding:24px 24px 64px;display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start}
+.pitch{flex:1 1 360px;min-width:0;padding-top:20px}
+.pill{display:inline-block;font-size:14px;font-weight:700;color:var(--blue);background:#E3EEFA;padding:7px 14px;border-radius:999px;margin:0 0 18px}
+h1{margin:0 0 18px;font-weight:800;font-size:clamp(34px,4.6vw,52px);line-height:1.05;letter-spacing:-.03em}
+.pitch>p{font-size:19px;line-height:1.6;color:var(--muted);margin:0 0 28px}
+.steps{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:14px;align-items:flex-start}
+.steps .n{flex:0 0 34px;height:34px;border-radius:10px;background:#E3EEFA;color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800}
+.steps li:first-child .n{background:var(--blue);color:#fff}
+.steps b{display:block;font-size:17px}.steps small{font-size:15px;color:var(--muted)}
+.pitch>p.fine{margin:32px 0 0;font-size:14px;line-height:1.6;color:#5d6f8c}
+.card{flex:1 1 500px;min-width:0;background:#fff;border:1px solid #e3e9f1;border-radius:18px;box-shadow:0 24px 60px rgba(14,42,79,.12);padding:32px;display:flex;flex-direction:column;gap:16px}
+.sec{margin:0;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.sec.gap{margin-top:8px;padding-top:18px;border-top:1px solid #eef2f7}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.g3{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:560px){.g2,.g3{grid-template-columns:1fr}.card{padding:22px}}
+label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600}
+label small{font-weight:400;color:#5d6f8c;font-size:13px}
+input,select{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--bad)}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.agree{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;font-size:14px;line-height:1.5;color:#33476a}
+.agree input{flex:0 0 auto;width:18px;height:18px;margin-top:2px}
+.go{font:inherit;font-weight:700;font-size:18px;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:16px;cursor:pointer;box-shadow:0 8px 20px rgba(26,95,168,.25)}
+.go:disabled{opacity:.6;cursor:default}
+.err{color:var(--bad);font-size:15px;min-height:1px}
+.center{text-align:center;font-size:13px;color:#5d6f8c;margin:0}
+.code{font-size:30px;letter-spacing:.35em;text-align:center;font-weight:700}
+.trap{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+[hidden]{display:none!important}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px}
+@media (max-width:560px){.checks{grid-template-columns:1fr}}
+.checks label{flex-direction:row;align-items:center;gap:10px;font-weight:500;font-size:15px}
+.checks input{width:18px;height:18px;flex:0 0 auto}
+textarea{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;width:100%;min-height:84px;resize:vertical;color:var(--navy)}
+.book{display:flex;gap:16px;align-items:flex-start;padding:16px;border-radius:12px;background:#fff;border:1px solid #e3e9f1}
+.book .ic{flex:0 0 44px;height:56px;border-radius:6px;background:var(--blue);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+.book .ic.b{background:#F2A93B;color:var(--navy)}
+.book b{display:block;font-size:17px}.book small{font-size:15px;color:var(--muted);line-height:1.5}
+.done{flex:1 1 500px;min-width:0;background:#fff;border:1px solid #e3e9f1;border-radius:18px;box-shadow:0 24px 60px rgba(14,42,79,.12);padding:32px;display:flex;flex-direction:column;gap:14px}
+.done h2{margin:0;font-size:28px;letter-spacing:-.02em}.done p{margin:0;color:var(--muted);font-size:17px;line-height:1.6}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.btn2{font-weight:700;font-size:16px;padding:14px 22px;border-radius:10px;text-decoration:none;border:1px solid var(--line);color:var(--navy);background:#fff}
+.btn1{font-weight:700;font-size:16px;padding:14px 22px;border-radius:10px;text-decoration:none;background:var(--blue);color:#fff}
+</style>
+<script src="/ga.js"></script>
+</head><body>
+<header>
+  <a class="logo" href="https://xsiteauto.com"><svg width="30" height="34" viewBox="1388 976 2767 3116" aria-hidden="true"><path fill="#5B9DC7" d="M 1540,2399 L 2231,3464 C 2358,3660 2621,3716 2818,3589 L 3883,2898 C 4079,2772 4135,2508 4008,2312 L 3317,1246 C 3190,1052 2927,996 2731,1121 L 1665,1812 C 1471,1939 1415,2202 1540,2399 Z"/><path fill="#307DB1" d="M 4004,2776 L 3292,3828 C 3162,4021 2897,4072 2703,3942 L 1651,3230 C 1459,3100 1408,2835 1538,2641 L 2249,1589 C 2379,1397 2644,1346 2838,1476 L 3890,2187 C 4083,2317 4134,2582 4004,2776 Z"/><path fill="#FFFFFF" d="M 3457,1893 L 3298,2164 C 3271,2208 3241,2272 3241,2272 L 3234,2272 C 3234,2272 3204,2208 3177,2164 L 2735,1425 C 2593,1379 2436,1409 2323,1507 L 2979,2543 2270,3647 2593,3866 3187,2913 C 3211,2876 3234,2822 3234,2822 L 3241,2822 C 3241,2822 3264,2876 3288,2913 L 3583,3399 3819,3050 3496,2543 3769,2104 3457,1893 Z"/></svg><b>XSite Auto</b></a>
+  <span>Ready to try it? <a href="/signup?ref=info"><b>Start a free trial</b></a></span>
+</header>
+<main>
+  <div class="pitch">
+    <p class="pill">Free · Sent by email</p>
+    <h1>Run the shop, not the paperwork.</h1>
+    <p>Tell us a little about your shop and we'll email you two free guides. No sales pitch in the guides, just practical ideas you can use this week.</p>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="book"><span class="ic">PDF</span><div><b>The Small Shop Playbook</b><small>Where small shops lose money every week, how to run the day from first call to close, and how to keep the schedule full.</small></div></div>
+      <div class="book"><span class="ic b">PDF</span><div><b>The XSite Auto brochure</b><small>What the software does, how setup works and what it costs, in US or Canadian dollars.</small></div></div>
+    </div>
+    <p class="fine">Built alongside a working Niagara repair shop run by a former Toyota master technician. XSite Group has served owner-run businesses since 2011.</p>
+  </div>
+
+  <form class="card" id="f" novalidate aria-label="Send me more information">
+    <p class="sec">Where should we send them?</p>
+    <div class="g2">
+      <label>Your name<input name="name" autocomplete="name" required></label>
+      <label>Email<input name="email" type="email" inputmode="email" autocomplete="email" required></label>
+    </div>
+    <div class="g2">
+      <label>Shop name<input name="shopName" autocomplete="organization" required></label>
+      <label>Phone<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+    </div>
+    <div><span style="font-size:14px;font-weight:600;display:block;margin-bottom:6px">Country</span>
+      <div class="seg" role="group" aria-label="Country"><button type="button" data-country="US" aria-pressed="true">United States</button><button type="button" data-country="CA" aria-pressed="false">Canada</button></div></div>
+    <div class="g2">
+      <label>City<input name="city" autocomplete="address-level2" required></label>
+      <label><span id="regionLbl">State</span><select name="region" autocomplete="address-level1" required></select></label>
+    </div>
+    <div class="g2">
+      <label>Technicians<select name="techs" required><option value="">Choose…</option><option value="1">Just me</option><option value="2-3">2 to 3</option><option value="4-6">4 to 6</option><option value="7-10">7 to 10</option><option value="10+">More than 10</option></select></label>
+      <label>What do you use now? <small>Optional</small><input name="software" placeholder="Paper, QuickBooks, Mitchell…"></label>
+    </div>
+    <p class="sec gap">What would help most? <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#5d6f8c">Optional</span></p>
+    <div class="checks">
+      <label><input type="checkbox" name="interests" value="booking">Online booking</label>
+      <label><input type="checkbox" name="interests" value="schedule">Scheduling my techs</label>
+      <label><input type="checkbox" name="interests" value="quickbooks">Less QuickBooks re-typing</label>
+      <label><input type="checkbox" name="interests" value="payments">Tracking payments and balances</label>
+      <label><input type="checkbox" name="interests" value="website">A better website</label>
+      <label><input type="checkbox" name="interests" value="reminders">Appointment reminders</label>
+    </div>
+    <label>Anything else? <small>Optional</small><textarea name="notes" maxlength="600"></textarea></label>
+    <div class="trap" aria-hidden="true"><label>Leave this empty<input name="website2" tabindex="-1" autocomplete="off"></label></div>
+    <label class="agree"><input type="checkbox" name="agree"><span>Email me the guides. XSite may follow up once or twice by email or phone. See our <a href="https://xsiteauto.com/privacy" target="_blank" rel="noopener">privacy policy</a>.</span></label>
+    <div class="err" id="err" role="alert"></div>
+    <button class="go" id="go" type="submit">Email me the guides</button>
+    <p class="center">We'll send a link to confirm your email first.</p>
+  </form>
+
+  <div class="done" id="check" hidden>
+    <p class="sec">Almost done</p>
+    <h2>Check your email</h2>
+    <p>We sent a confirm link to <b id="sentTo"></b>. Click it and your guides arrive right away. If it's not there in a minute or two, check your junk folder.</p>
+    <p id="dev" hidden></p>
+    <p style="font-size:15px"><a href="#" id="back">Use a different email</a></p>
+  </div>
+
+  <div class="done" id="sent" hidden>
+    <p class="sec">You're all set</p>
+    <h2>Your guides are on the way</h2>
+    <p>Your email is confirmed, and the Playbook and brochure are in your inbox now. Want to see it running with a shop like yours?</p>
+    <div class="btns"><a class="btn1" href="/signup?ref=guides">Start a free 14-day trial</a><a class="btn2" href="mailto:david@xsitegroup.ca?subject=XSite%20Auto%20demo">Book a 15-minute demo</a><a class="btn2" href="tel:9053460864">905.346.0864</a></div>
+  </div>
+
+  <div class="done" id="oops" hidden>
+    <p class="sec">Hmm</p>
+    <h2 id="oopsH">That link has expired</h2>
+    <p id="oopsP">Fill in the form again and we'll send a fresh one. It only takes a minute.</p>
+    <div class="btns"><a class="btn1" href="/info">Send a new link</a><a class="btn2" href="tel:9053460864">Call 905.346.0864</a></div>
+  </div>
+</main>
+<script>
+const US={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+const CA={AB:"Alberta",BC:"British Columbia",MB:"Manitoba",NB:"New Brunswick",NL:"Newfoundland and Labrador",NS:"Nova Scotia",NT:"Northwest Territories",NU:"Nunavut",ON:"Ontario",PE:"Prince Edward Island",QC:"Quebec",SK:"Saskatchewan",YT:"Yukon"};
+const f=document.getElementById("f"),err=document.getElementById("err"),show=id=>{["f","check","sent","oops"].forEach(x=>document.getElementById(x).hidden=x!==id);window.scrollTo({top:0})};
+let country=/^en-CA|fr-CA/.test(navigator.language||"")?"CA":"US";
+function setCountry(c){country=c;document.querySelectorAll("[data-country]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.country===c)));
+  const list=c==="CA"?CA:US,sel=f.region,keep=sel.value;sel.innerHTML=`<option value="">Choose…</option>`+Object.entries(list).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");if(list[keep])sel.value=keep;
+  document.getElementById("regionLbl").textContent=c==="CA"?"Province":"State"}
+document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>setCountry(b.dataset.country));
+setCountry(country);
+f.phone.addEventListener("input",e=>{let d=e.target.value.replace(/\D/g,"");if(d.length===11&&d[0]==="1")d=d.slice(1);if(d.length>10)return;e.target.value=d.slice(0,3)+(d.length>3?"-"+d.slice(3,6):"")+(d.length>6?"-"+d.slice(6):"")});
+const q=new URLSearchParams(location.search);
+if(q.get("sent")){show("sent");window.xsTrack&&xsTrack("generate_lead",{method:"guides"})}
+else if(q.get("link")){show("oops");if(q.get("link")==="mail"){document.getElementById("oopsH").textContent="We couldn't send the email";document.getElementById("oopsP").textContent="Your email is confirmed, but sending the guides failed. Click your confirm link again in a few minutes, or call us and we'll send them."}
+  else if(q.get("link")==="bad"){document.getElementById("oopsH").textContent="That link didn't work";}}
+f.addEventListener("submit",async e=>{
+  e.preventDefault();err.textContent="";f.querySelectorAll("[aria-invalid]").forEach(x=>x.removeAttribute("aria-invalid"));
+  const go=document.getElementById("go");go.disabled=true;go.textContent="Sending…";
+  const fd=new FormData(f),body=Object.fromEntries(fd);body.interests=fd.getAll("interests");body.agree=f.agree.checked;body.country=country;
+  body.source=q.get("ref")||q.get("utm_campaign")||document.referrer.replace(/^https?:\/\//,"").split("/")[0]||"";
+  try{
+    const r=await fetch("/api/leads/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(r.ok){document.getElementById("sentTo").textContent=d.email;show("check");window.xsTrack&&xsTrack("lead_form_sent",{country});
+      if(d.devLink){const p=document.getElementById("dev");p.hidden=false;p.innerHTML='Test mode: <a href="'+d.devLink+'">confirm link</a>'}}
+    else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
+  }catch(x){err.textContent="Can't reach XSite Auto. Check your connection and try again."}
+  go.disabled=false;go.textContent="Email me the guides";
+});
+document.getElementById("back").onclick=e=>{e.preventDefault();show("f")};
+</script>
+</body></html>

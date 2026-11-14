@@ -72,13 +72,13 @@ const ago=d=>{if(!d)return "never";const m=(Date.now()-new Date(d))/6e4;if(m<60)
 const STATUS={trial:"Trial",active:"Active",past_due:"Payment failed",read_only:"Trial ended",closed:"Closed"};
 const REGION={ON:"Ontario",QC:"Quebec",BC:"British Columbia",AB:"Alberta",MB:"Manitoba",SK:"Saskatchewan",NS:"Nova Scotia",NB:"New Brunswick",NL:"Newfoundland and Labrador",PE:"Prince Edward Island",NT:"Northwest Territories",YT:"Yukon",NU:"Nunavut"};
 const STATES={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
-let D=[],open=null,f={q:"",status:"",country:"",region:""};
+let D=[],L=[],open=null,f={q:"",status:"",country:"",region:""};
 
 async function load(){
   const r=await fetch("/api/admin/shops",{credentials:"same-origin",cache:"no-store"});
   if(r.status===401){location.href="/login";return}
   if(!r.ok){$("#app").innerHTML=`<div class="empty">This page is for XSite staff. Your login isn't on the admin list.</div>`;return}
-  const j=await r.json();D=j.shops;$("#who").textContent=j.me||"";$(j.hasShop?"#sb":"#so").hidden=false;render();
+  const j=await r.json();D=j.shops;L=j.leads||[];$("#who").textContent=j.me||"";$(j.hasShop?"#sb":"#so").hidden=false;render();
 }
 function badge(s){return s.original?`<span class="badge b-original">XSite's own</span>`:`<span class="badge b-${s.status}">${STATUS[s.status]||s.status}</span>`}
 function statusNote(s){
@@ -114,6 +114,7 @@ function render(){
    <div class="tile"><div class="l">Monthly revenue</div><div class="v">$${mrr("CAD")}</div><div class="s">CAD · plus $${mrr("USD")} USD</div></div>
    <div class="tile"><div class="l">Trial ended</div><div class="v">${n("read_only")}</div><div class="s">${n("past_due")} payment failed</div></div>
    <div class="tile"><div class="l">Closed</div><div class="v">${n("closed")}</div></div>
+   <div class="tile"><div class="l">Info requests</div><div class="v">${L.filter(l=>l.verifiedAt).length}</div><div class="s">${L.filter(l=>!l.verifiedAt).length} not confirmed yet</div></div>
   </div>
   <div class="two">
    <section class="panel">
@@ -134,7 +135,17 @@ function render(){
       ${open===s.id?detail(s):""}`).join("")}</tbody></table>`:`<div class="empty">No shops match.</div>`}
    </section>
    <aside class="panel"><h2>Where they are</h2><div class="where"><h3>Canada</h3>${whereList("CA")}<h3>United States</h3>${whereList("US")}</div></aside>
-  </div>`;
+  </div>
+  <section class="panel" style="margin-top:16px"><h2>Info requests (guides)</h2>
+   ${L.length?`<table><thead><tr><th>Shop</th><th>Location</th><th>Contact</th><th>Techs</th><th>Interested in</th><th>Asked</th><th>Email</th></tr></thead><tbody>
+   ${L.map(l=>`<tr><td><div class="n">${esc(l.shopName||"")}</div><div class="m">${esc(l.software?"Uses "+l.software:"")}</div></td>
+     <td data-l="Location">${esc([l.city,l.region,l.country].filter(Boolean).join(", "))}</td>
+     <td data-l="Contact"><div>${esc(l.name||"")}</div><div class="m"><a href="mailto:${esc(l.email)}">${esc(l.email)}</a> · <a href="tel:${esc((l.phone||"").replace(/\D/g,""))}">${esc(l.phone||"")}</a></div>${l.notes?`<div class="m">${esc(l.notes)}</div>`:""}</td>
+     <td data-l="Techs">${esc(l.techs||"")}</td>
+     <td data-l="Interested in">${esc((l.interests||[]).join(", "))}</td>
+     <td data-l="Asked">${day(l.createdAt)}</td>
+     <td>${l.sentAt?`<span class="badge b-active">Guides sent</span>`:l.verifiedAt?`<span class="badge b-past_due">Confirmed, not sent</span>`:`<span class="badge b-read_only">Not confirmed</span>`}</td></tr>`).join("")}</tbody></table>`:`<div class="empty">No info requests yet.</div>`}
+  </section>`;
   $("#q").oninput=e=>{f.q=e.target.value;const p=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(p,p)};
   $("#st").onchange=e=>{f.status=e.target.value;render()};
   $("#co").onchange=e=>{f.country=e.target.value;render()};
