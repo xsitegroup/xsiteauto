@@ -137,20 +137,26 @@ function render(){
    <aside class="panel"><h2>Where they are</h2><div class="where"><h3>Canada</h3>${whereList("CA")}<h3>United States</h3>${whereList("US")}</div></aside>
   </div>
   <section class="panel" style="margin-top:16px"><h2>Info requests (guides)</h2>
-   ${L.length?`<table><thead><tr><th>Shop</th><th>Location</th><th>Contact</th><th>Techs</th><th>Interested in</th><th>Asked</th><th>Email</th></tr></thead><tbody>
+   ${L.length?`<table><thead><tr><th>Shop</th><th>Location</th><th>Contact</th><th>Techs</th><th>Interested in</th><th>Asked</th><th>Email</th><th></th></tr></thead><tbody>
    ${L.map(l=>`<tr><td><div class="n">${esc(l.shopName||"")}</div><div class="m">${esc(l.software?"Uses "+l.software:"")}</div></td>
      <td data-l="Location">${esc([l.city,l.region,l.country].filter(Boolean).join(", "))}</td>
      <td data-l="Contact"><div>${esc(l.name||"")}</div><div class="m"><a href="mailto:${esc(l.email)}">${esc(l.email)}</a> · <a href="tel:${esc((l.phone||"").replace(/\D/g,""))}">${esc(l.phone||"")}</a></div>${l.notes?`<div class="m">${esc(l.notes)}</div>`:""}</td>
      <td data-l="Techs">${esc(l.techs||"")}</td>
      <td data-l="Interested in">${esc((l.interests||[]).join(", "))}</td>
      <td data-l="Asked">${day(l.createdAt)}</td>
-     <td>${l.sentAt?`<span class="badge b-active">Guides sent</span>`:l.verifiedAt?`<span class="badge b-past_due">Confirmed, not sent</span>`:`<span class="badge b-read_only">Not confirmed</span>`}</td></tr>`).join("")}</tbody></table>`:`<div class="empty">${esc(window.LE||"No info requests yet.")}</div>`}
+     <td>${l.sentAt?`<span class="badge b-active">Guides sent</span>`:l.verifiedAt?`<span class="badge b-past_due">Confirmed, not sent</span>`:`<span class="badge b-read_only">Not confirmed</span>`}</td><td><button class="btn" data-del="${l.id}" data-name="${esc(l.shopName||l.email)}" style="font-size:12px;padding:4px 10px">Delete</button></td></tr>`).join("")}</tbody></table>`:`<div class="empty">${esc(window.LE||"No info requests yet.")}</div>`}
   </section>`;
   $("#q").oninput=e=>{f.q=e.target.value;const p=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(p,p)};
   $("#st").onchange=e=>{f.status=e.target.value;render()};
   $("#co").onchange=e=>{f.country=e.target.value;render()};
   if($("#clr"))$("#clr").onclick=()=>{f.region="";render()};
   document.querySelectorAll("[data-region]").forEach(el=>el.onclick=()=>{f.region=f.region===el.dataset.region?"":el.dataset.region;render()});
+  document.querySelectorAll("[data-del]").forEach(el=>el.onclick=async()=>{
+    if(!confirm(`Delete the info request from ${el.dataset.name}? This can't be undone.`))return;
+    el.disabled=true;el.textContent="Deleting…";
+    const r=await fetch("/api/admin/leads?id="+encodeURIComponent(el.dataset.del),{method:"DELETE",credentials:"same-origin"});
+    if(r.ok){L=L.filter(l=>l.id!==el.dataset.del);render()}else{el.disabled=false;el.textContent="Delete";alert("Couldn't delete it. Try again.")}
+  });
   document.querySelectorAll("tr.row").forEach(el=>el.onclick=()=>{open=open===el.dataset.id?null:el.dataset.id;render()});
 }
 function detail(s){
