@@ -22,7 +22,7 @@ export async function GET(req) {
   const { rowCount } = await query("update leads set sent_at = now() where id = $1 and sent_at is null", [lead.id]);
   if (!rowCount) return go("sent=1");
   try {
-    await leadGuidesEmail(lead.email, d.name, d.country);
+    await leadGuidesEmail(lead.email, d.name, d.country, d.papers);
   } catch (e) {
     console.error("leads: guides email failed", e.message);
     await query("update leads set sent_at = null where id = $1", [lead.id]);
@@ -34,8 +34,8 @@ export async function GET(req) {
     heading: "Someone asked for more information",
     intro: `${d.name} confirmed their email and has the white papers and brochure. A call in the next day or two is the best time to follow up.`,
     rows: [["Shop", d.shopName], ["Contact", d.name], ["Phone", d.phone], ["Email", lead.email], ["Where", `${d.city}, ${d.region}, ${d.country}`],
-      ["Technicians", d.techs], ["Uses now", d.software || "not given"], ["Interested in", want], ["Notes", d.notes || ""], ["Came from", d.source || ""]],
-    data: { lead: { id: lead.id, ...d, email: lead.email, guides: GUIDES(d.country).map((g) => g.name) } },
+      ["Technicians", d.techs], ["Uses now", d.software || "not given"], ["White papers", GUIDES(d.country, d.papers).filter((g) => g.key !== "brochure").map((g) => g.name).join(", ")], ["Interested in", want], ["Notes", d.notes || ""], ["Came from", d.source || ""]],
+    data: { lead: { id: lead.id, ...d, email: lead.email, guides: GUIDES(d.country, d.papers).map((g) => g.name) } },
   });
   return go("sent=1");
 }

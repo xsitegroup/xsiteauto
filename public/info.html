@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Free white papers for repair shops · XSite Auto</title>
-<meta name="description" content="Free white papers for independent repair shops: Ten Places Small Shops Lose Money, Running the Day, and Keeping the Schedule Full.">
+<meta name="description" content="Seven free white papers for independent repair shops: money leaks, running the day, keeping the schedule full, labour rates, quotes, choosing software and switching from paper.">
 <link rel="icon" href="/icons/app/192.png">
 <meta name="theme-color" content="#1A5FA8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -50,6 +50,11 @@ input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--bad)}
 .code{font-size:30px;letter-spacing:.35em;text-align:center;font-weight:700}
 .trap{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
 [hidden]{display:none!important}
+.papers{display:flex;flex-direction:column;gap:8px}
+.papers label{flex-direction:row;align-items:flex-start;gap:12px;padding:10px 12px;border:1px solid #e3e9f1;border-radius:10px;cursor:pointer;font-weight:400}
+.papers label:has(input:checked){border-color:var(--blue);background:#F2F7FD}
+.papers input{width:18px;height:18px;flex:0 0 auto;margin-top:2px}
+.papers b{display:block;font-size:15px}.papers small{color:#5d6f8c;font-size:13px}
 .checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px}
 @media (max-width:560px){.checks{grid-template-columns:1fr}}
 .checks label{flex-direction:row;align-items:center;gap:10px;font-weight:500;font-size:15px}
@@ -75,18 +80,28 @@ textarea{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1p
   <div class="pitch">
     <p class="pill">Free · Sent by email</p>
     <h1>Run the shop, not the paperwork.</h1>
-    <p>Tell us a little about your shop and we'll email you our free white papers. No sales pitch, just practical ideas you can use this week.</p>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="book"><span class="ic">PDF</span><div><b>Ten Places Small Shops Lose Money</b><small>The everyday leaks in a small shop, what each one can cost, and a step-by-step fix for each.</small></div></div>
-      <div class="book"><span class="ic">PDF</span><div><b>Running the Day, From First Call to Close</b><small>A routine for the counter, the bays and the cash drawer, with a printable check-in sheet and end-of-day close.</small></div></div>
-      <div class="book"><span class="ic">PDF</span><div><b>Keeping the Schedule Full</b><small>How customers find you, book you and come back, with message templates and a 12-month calendar.</small></div></div>
-      <div class="book"><span class="ic b">PDF</span><div><b>The XSite Auto brochure</b><small>What the software does, how setup works and what it costs, in US or Canadian dollars.</small></div></div>
-    </div>
+    <p>Seven free white papers for independent shops, written alongside a working repair shop. No sales pitch, just practical ideas you can use this week.</p>
+    <ul class="steps" style="margin-bottom:6px">
+      <li><span class="n">1</span><div><b>Pick the white papers you want</b><small>Seven practical guides for small shops. Take one or all of them.</small></div></li>
+      <li><span class="n">2</span><div><b>Confirm your email</b><small>One click on the link we send.</small></div></li>
+      <li><span class="n">3</span><div><b>Download them</b><small>Each one is a PDF, sent with our brochure.</small></div></li>
+    </ul>
     <p class="fine">Built alongside a working Niagara repair shop run by a former Toyota master technician. XSite Group has served owner-run businesses since 2011.</p>
   </div>
 
   <form class="card" id="f" novalidate aria-label="Send me more information">
-    <p class="sec">Where should we send them?</p>
+    <p class="sec">Which white papers would you like?</p>
+    <div class="papers" id="papers">
+      <label><input type="checkbox" name="papers" value="leaks" checked><span><b>Ten Places Small Shops Lose Money</b><small>The ten everyday leaks, what each one costs and how to fix it.</small></span></label>
+      <label><input type="checkbox" name="papers" value="day" checked><span><b>Running the Day, From First Call to Close</b><small>A routine for the counter, the bays and the cash drawer.</small></span></label>
+      <label><input type="checkbox" name="papers" value="full" checked><span><b>Keeping the Schedule Full</b><small>How customers find you, book you and come back.</small></span></label>
+      <label><input type="checkbox" name="papers" value="rate" checked><span><b>Setting Your Labour Rate</b><small>A rate that covers your costs and pays you, with a worksheet.</small></span></label>
+      <label><input type="checkbox" name="papers" value="quotes" checked><span><b>Quotes That Get a Yes</b><small>Present estimates and handle "that's too expensive."</small></span></label>
+      <label><input type="checkbox" name="papers" value="buying" checked><span><b>Choosing Shop Software: A Buyer's Checklist</b><small>Questions to ask any vendor, and a scorecard.</small></span></label>
+      <label><input type="checkbox" name="papers" value="switching" checked><span><b>Switching from Paper Without Losing a Day</b><small>A two-week plan to move onto software.</small></span></label>
+    </div>
+    <p class="center" style="text-align:left;margin-top:-6px"><a href="#" id="pAll">Select all</a> · <a href="#" id="pNone">Clear</a></p>
+    <p class="sec gap">Where should we send them?</p>
     <div class="g2">
       <label>Your name<input name="name" autocomplete="name" required></label>
       <label>Email<input name="email" type="email" inputmode="email" autocomplete="email" required></label>
@@ -156,20 +171,24 @@ document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>setCountry(
 setCountry(country);
 f.phone.addEventListener("input",e=>{let d=e.target.value.replace(/\D/g,"");if(d.length===11&&d[0]==="1")d=d.slice(1);if(d.length>10)return;e.target.value=d.slice(0,3)+(d.length>3?"-"+d.slice(3,6):"")+(d.length>6?"-"+d.slice(6):"")});
 const q=new URLSearchParams(location.search);
+const pBoxes=[...f.querySelectorAll('input[name="papers"]')];
+if(q.get("paper")){const want=q.get("paper").split(",");if(pBoxes.some(b=>want.includes(b.value)))pBoxes.forEach(b=>b.checked=want.includes(b.value))}
+document.getElementById("pAll").onclick=e=>{e.preventDefault();pBoxes.forEach(b=>b.checked=true)};
+document.getElementById("pNone").onclick=e=>{e.preventDefault();pBoxes.forEach(b=>b.checked=false)};
 if(q.get("sent")){show("sent");window.xsTrack&&xsTrack("generate_lead",{method:"guides"})}
 else if(q.get("link")){show("oops");if(q.get("link")==="mail"){document.getElementById("oopsH").textContent="We couldn't send the email";document.getElementById("oopsP").textContent="Your email is confirmed, but sending the white papers failed. Click your confirm link again in a few minutes, or call us and we'll send them."}
   else if(q.get("link")==="bad"){document.getElementById("oopsH").textContent="That link didn't work";}}
 f.addEventListener("submit",async e=>{
   e.preventDefault();err.textContent="";f.querySelectorAll("[aria-invalid]").forEach(x=>x.removeAttribute("aria-invalid"));
   const go=document.getElementById("go");go.disabled=true;go.textContent="Sending…";
-  const fd=new FormData(f),body=Object.fromEntries(fd);body.interests=fd.getAll("interests");body.agree=f.agree.checked;body.country=country;
+  const fd=new FormData(f),body=Object.fromEntries(fd);body.interests=fd.getAll("interests");body.papers=fd.getAll("papers");body.agree=f.agree.checked;body.country=country;
   body.source=q.get("ref")||q.get("utm_campaign")||document.referrer.replace(/^https?:\/\//,"").split("/")[0]||"";
   try{
     const r=await fetch("/api/leads/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
     const d=await r.json().catch(()=>({}));
     if(r.ok){document.getElementById("sentTo").textContent=d.email;show("check");window.xsTrack&&xsTrack("lead_form_sent",{country});
       if(d.devLink){const p=document.getElementById("dev");p.hidden=false;p.innerHTML='Test mode: <a href="'+d.devLink+'">confirm link</a>'}}
-    else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
+    else{err.textContent=d.error||"Something went wrong. Please try again.";if(d.field==="papers"){document.getElementById("papers").scrollIntoView({block:"center"})}else if(d.field&&f[d.field]){f[d.field].setAttribute("aria-invalid","true");f[d.field].focus()}}
   }catch(x){err.textContent="Can't reach XSite Auto. Check your connection and try again."}
   go.disabled=false;go.textContent="Email me the white papers";
 });
