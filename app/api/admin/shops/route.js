@@ -47,8 +47,12 @@ export async function GET() {
       monthly: paying ? PRICES[cur].monthly / 100 : 0,
     };
   });
-  const leads = await asSystem(async (q) => (await q(
-    "select id, email, data, created_at, verified_at, sent_at from leads order by created_at desc limit 200")).rows)
-    .map((l) => ({ id: l.id, email: l.email, ...l.data, createdAt: l.created_at, verifiedAt: l.verified_at, sentAt: l.sent_at }));
-  return NextResponse.json({ shops, leads, me: user.email, hasShop: !!user.sid, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
+  // Info requests. A problem here (say the table isn't set up yet) must never hide the shops.
+  let leads = [], leadsError = null;
+  try {
+    leads = (await asSystem(async (q) => (await q(
+      "select id, email, data, created_at, verified_at, sent_at from leads order by created_at desc limit 200")).rows))
+      .map((l) => ({ id: l.id, email: l.email, ...l.data, createdAt: l.created_at, verifiedAt: l.verified_at, sentAt: l.sent_at }));
+  } catch (e) { console.error("admin leads:", e.message); leadsError = "The info requests list isn't set up yet. Run npm run db:setup."; }
+  return NextResponse.json({ shops, leads, leadsError, me: user.email, hasShop: !!user.sid, now: new Date().toISOString() }, { headers: { "Cache-Control": "no-store" } });
 }

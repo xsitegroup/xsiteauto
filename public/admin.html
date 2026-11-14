@@ -77,8 +77,8 @@ let D=[],L=[],open=null,f={q:"",status:"",country:"",region:""};
 async function load(){
   const r=await fetch("/api/admin/shops",{credentials:"same-origin",cache:"no-store"});
   if(r.status===401){location.href="/login";return}
-  if(!r.ok){$("#app").innerHTML=`<div class="empty">This page is for XSite staff. Your login isn't on the admin list.</div>`;return}
-  const j=await r.json();D=j.shops;L=j.leads||[];$("#who").textContent=j.me||"";$(j.hasShop?"#sb":"#so").hidden=false;render();
+  if(!r.ok){$("#app").innerHTML=r.status===404?`<div class="empty">This page is for XSite staff. Your login isn't on the admin list.</div>`:`<div class="empty">The admin page couldn't load (error ${r.status}). Try Refresh in a minute.</div>`;return}
+  const j=await r.json();D=j.shops;L=j.leads||[];window.LE=j.leadsError||"";$("#who").textContent=j.me||"";$(j.hasShop?"#sb":"#so").hidden=false;render();
 }
 function badge(s){return s.original?`<span class="badge b-original">XSite's own</span>`:`<span class="badge b-${s.status}">${STATUS[s.status]||s.status}</span>`}
 function statusNote(s){
@@ -144,7 +144,7 @@ function render(){
      <td data-l="Techs">${esc(l.techs||"")}</td>
      <td data-l="Interested in">${esc((l.interests||[]).join(", "))}</td>
      <td data-l="Asked">${day(l.createdAt)}</td>
-     <td>${l.sentAt?`<span class="badge b-active">Guides sent</span>`:l.verifiedAt?`<span class="badge b-past_due">Confirmed, not sent</span>`:`<span class="badge b-read_only">Not confirmed</span>`}</td></tr>`).join("")}</tbody></table>`:`<div class="empty">No info requests yet.</div>`}
+     <td>${l.sentAt?`<span class="badge b-active">Guides sent</span>`:l.verifiedAt?`<span class="badge b-past_due">Confirmed, not sent</span>`:`<span class="badge b-read_only">Not confirmed</span>`}</td></tr>`).join("")}</tbody></table>`:`<div class="empty">${esc(window.LE||"No info requests yet.")}</div>`}
   </section>`;
   $("#q").oninput=e=>{f.q=e.target.value;const p=e.target.selectionStart;render();const i=$("#q");i.focus();i.setSelectionRange(p,p)};
   $("#st").onchange=e=>{f.status=e.target.value;render()};
